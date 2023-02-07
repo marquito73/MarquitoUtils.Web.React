@@ -5,6 +5,10 @@ VisualStudioVersion = 17.2.32602.215
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarquitoUtils.Web.React", "MarquitoUtils.Web.React\MarquitoUtils.Web.React.csproj", "{DD44E61A-8A9B-4B17-90FB-6ABBE7ACF6D2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarquitoUtils.Web", "..\MarquitoUtils.Web\MarquitoUtils.Web\MarquitoUtils.Web.csproj", "{1116C91A-9697-4843-AEE3-4344CA8F62E9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarquitoUtils.Main", "..\MarquitoUtils.Main\MarquitoUtils.Main\MarquitoUtils.Main.csproj", "{8A0618A2-1E37-48D5-A5CD-29826AB35539}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{DD44E61A-8A9B-4B17-90FB-6ABBE7ACF6D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD44E61A-8A9B-4B17-90FB-6ABBE7ACF6D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD44E61A-8A9B-4B17-90FB-6ABBE7ACF6D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1116C91A-9697-4843-AEE3-4344CA8F62E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1116C91A-9697-4843-AEE3-4344CA8F62E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1116C91A-9697-4843-AEE3-4344CA8F62E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1116C91A-9697-4843-AEE3-4344CA8F62E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A0618A2-1E37-48D5-A5CD-29826AB35539}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A0618A2-1E37-48D5-A5CD-29826AB35539}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A0618A2-1E37-48D5-A5CD-29826AB35539}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A0618A2-1E37-48D5-A5CD-29826AB35539}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
