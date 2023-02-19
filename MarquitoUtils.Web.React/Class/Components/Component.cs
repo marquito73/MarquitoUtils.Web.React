@@ -83,10 +83,7 @@ namespace MarquitoUtils.Web.React.Class.Components
         {
             StringBuilder sbJson = new StringBuilder();
 
-            //string jsonObject = WebUtils.GetParametersParsed(this).ToString()
             string jsonObject = WebUtils.GetSerializedObject(this)
-                //.Replace("\\", "")
-                //.Replace("\"", "")
                 .Replace("{}", "new Map()")
                 .Replace("[]", "new Array()");
 

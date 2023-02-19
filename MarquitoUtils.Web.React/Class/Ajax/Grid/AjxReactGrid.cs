@@ -1,6 +1,7 @@
 ﻿using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.Class.Communication;
 using MarquitoUtils.Web.Class.Tools;
+using MarquitoUtils.Web.React.Class.Components;
 using MarquitoUtils.Web.React.Class.Components.Grid;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -34,30 +35,32 @@ namespace MarquitoUtils.Web.React.Class.Ajax.Grid
 
             if (Utils.IsNotEmpty(gridId))
             {
-                ReactGrid<object> reactGrid = this.WebDataEngine.GetSessionValue<ReactGrid<object>>(gridId);
-
+                ReactGrid<object> reactGrid = this.WebDataEngine
+                    .GetSessionValue<ReactGrid<object>>(gridId);
                 if (Utils.IsNotNull(reactGrid))
                 {
+                    // Empty message
+                    this.GridData.Add(GridDataType.MESSAGE, "");
                     switch (ajaxAction)
                     {
                         case "getNextRows":
-                            GridData.Add(GridDataType.ROWS, "Grid rows");
+                            this.GridData.Add(GridDataType.ROWS, reactGrid.getNextRows());
                             break;
                         case "":
                         default:
-                            //actionGridResult = this.GetContentResult("Grid action not found");
-                            GridData.Add(GridDataType.MESSAGE, "Grid action not found");
+                            this.GridData.Add(GridDataType.MESSAGE, "Grid action not found");
                             break;
                     }
+                    this.WebDataEngine.SetSessionValue(reactGrid.Id, reactGrid);
                 }
                 else
                 {
-                    GridData.Add(GridDataType.MESSAGE, "Grid not found in Session scope");
+                    this.GridData.Add(GridDataType.MESSAGE, "Grid not found in Session scope");
                 }
             }
             else
             {
-                GridData.Add(GridDataType.MESSAGE, "Grid id not found in query");
+                this.GridData.Add(GridDataType.MESSAGE, "Grid id not found in query");
             }
 
             return GetGridData();
@@ -67,9 +70,10 @@ namespace MarquitoUtils.Web.React.Class.Ajax.Grid
         {
             Dictionary<string, object> gridData = new Dictionary<string, object>();
 
-            gridData = GridData.ToDictionary(data => data.Key.ToString().ToUpper(), data => data.Value);
+            gridData = this.GridData
+                .ToDictionary(data => data.Key.ToString().ToUpper(), data => data.Value);
 
-            return GetContentResult(Utils.GetSerializedObject(gridData));
+            return this.GetContentResult(Utils.GetSerializedObject(gridData));
         }
     }
 }

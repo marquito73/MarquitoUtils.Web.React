@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Grid
 {
-    public abstract class ReactGrid<Entity> : Component where Entity : class
+    public class ReactGrid<Entity> : Component where Entity : class
     {
         [JsonRequired]
         protected int RowsToLoadEachTime { get; set; } = 20;
@@ -19,20 +19,29 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
         protected bool UseInfiniteScroll { get; set; } = false;
         [JsonRequired]
         private string RootUrl { get; set; }
+        [JsonRequired]
+        private int TotalOfRows { get; set; } = 0;
+        [JsonRequired]
         protected ISet<Entity> Entities { get; } = new HashSet<Entity>();
-        protected ISet<Entity> LoadedEntities { get; } = new HashSet<Entity>();
+        /*[JsonRequired]
+        protected ISet<Entity> LoadedEntities { get; } = new HashSet<Entity>();*/
         [JsonRequired]
         protected ISet<Column> Columns { get; } = new HashSet<Column>();
         [JsonRequired]
         protected ISet<Row> Rows { get; } = new HashSet<Row>();
-        [JsonIgnore]
-        protected ISet<Row> LastLoadedRows { get; } = new HashSet<Row>();
+        //protected ISet<Row> LastLoadedRows { get; } = new HashSet<Row>();
+        [JsonRequired]
+        protected ISet<Row> LoadedRows { get; } = new HashSet<Row>();
+        [JsonRequired]
+        protected ISet<int> LastLoadedRows { get; } = new HashSet<int>();
         public ReactGrid(string id, string containerId, string rootUrl) : base(id, containerId)
         {
             this.ReactComponentName = "Grid";
             this.RootUrl = rootUrl;
 
             this.RootUrl = this.getCorrectFecthRootUrl(rootUrl);
+
+            this.Rows.Clear();
 
             this.InitGrid();
         }
@@ -59,6 +68,8 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             this.Attributes.Add("cols", this.GetNumberOfColumns());
             this.Attributes.Add("rows", this.GetNumberOfRows());
 
+            this.TotalOfRows = this.LoadedRows.Count;
+
             return new HtmlString(this.GetInitReactComponent());
         }
 
@@ -75,19 +86,52 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             }
         }
 
-        protected abstract void InitGrid();
+        protected virtual void InitGrid()
+        {
 
-        protected abstract Row LoadRow(Entity entityToLoad);
+        }
+
+        protected virtual Row LoadRow(Entity entityToLoad)
+        {
+            //return this.LoadRow(entityToLoad);
+            return null;
+        }
 
         public void InitLoading()
         {
-            if (Utils.IsEmpty(this.Rows))
+            /*if (Utils.IsEmpty(this.Rows))
             {
                 this.LoadNextRows();
+            }*/
+            foreach (Entity entity in this.Entities)
+            {
+                Row rowAdded = this.LoadRow(entity);
             }
+
+            this.getNextRows();
         }
 
-        private void LoadNextRows()
+        /*public ISet<Row> getLastLoadedRows()
+        {
+            return new HashSet<Row>(this.LoadedRows);
+        }*/
+
+        public ISet<Row> getNextRows()
+        {
+            ISet<Row> rows = this.LoadedRows.Where(row => !this.LastLoadedRows.Contains(row.RowNumber))
+                .Take(this.RowsToLoadEachTime)
+                .ToHashSet();
+
+            foreach (Row row in rows)
+            {
+                this.LastLoadedRows.Add(row.RowNumber);
+                this.Rows.Add(row);
+            }
+
+            return rows;
+        }
+
+        /*public void LoadNextRows()
         {
             ISet<Entity> entitiesToLoad = this.Entities
                 .Where(entityToLoad => !this.LoadedEntities.Contains(entityToLoad))
@@ -104,9 +148,9 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             {
                 Row rowAdded = this.LoadRow(entity);
                 this.Rows.Add(rowAdded);
-                this.LastLoadedRows.Add(rowAdded);
+                this.LoadedRows.Add(rowAdded);
             }
-        }
+        }*/
 
         //public string Get
 
@@ -134,12 +178,12 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
 
         protected Row getNewRow()
         {
-            return this.GetRow(this.Rows.Count);
+            return this.GetRow(this.LoadedRows.Count);
         }
 
         protected Row GetRow(int rowNumber)
         {
-            ISet<Row> rows = this.Rows
+            ISet<Row> rows = this.LoadedRows
                 .Where(row => row.RowNumber.Equals(rowNumber))
                 .ToHashSet();
 
@@ -148,7 +192,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             {
                 newRow = new Row(this.Id + "_row_" + rowNumber, "", rowNumber);
 
-                this.Rows.Add(newRow);
+                this.LoadedRows.Add(newRow);
             }
             else
             {

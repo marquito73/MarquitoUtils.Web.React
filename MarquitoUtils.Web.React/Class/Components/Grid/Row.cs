@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Grid
 {
-    public sealed class Row : Component
+    public sealed class Row : Component, IComparable<Row>
     {
         public int RowNumber { get; set; }
         [JsonRequired]
@@ -50,6 +50,18 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             }
 
             return newCell;
+        }
+
+        public int CompareTo(Row? otherRow)
+        {
+            if (Utils.IsNotNull(otherRow))
+            {
+                return this.RowNumber.CompareTo(otherRow.RowNumber);
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }
