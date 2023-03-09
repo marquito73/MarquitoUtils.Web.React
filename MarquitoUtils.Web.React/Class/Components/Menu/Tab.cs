@@ -6,8 +6,8 @@ namespace MarquitoUtils.Web.React.Class.Menu
     public class Tab : Button.Button
     {
         public WebFunction OnClick { get; set; } = new WebFunction();
-        public Tab(string id, string containerId, string caption, WebFunction onClickFunction) 
-            : base(id, containerId, caption)
+        public Tab(string id, string caption, WebFunction onClickFunction) 
+            : base(id, caption)
         {
             this.OnClick = onClickFunction;
         }

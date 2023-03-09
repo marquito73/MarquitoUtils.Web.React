@@ -16,8 +16,8 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
         public int ColNumber { get; set; }
         public string ColName { get; set; }
         public EnumContentType CellType { get; set; }
-        public Cell(string id, string containerId, int colNumber, int rowNumber, object value) 
-            : base(id, containerId)
+        public Cell(string id, int colNumber, int rowNumber, object value) 
+            : base(id)
         {
             this.ColNumber = colNumber;
             this.RowNumber = rowNumber;

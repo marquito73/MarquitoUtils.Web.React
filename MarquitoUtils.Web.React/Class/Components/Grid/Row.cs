@@ -14,7 +14,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
         public int RowNumber { get; set; }
         [JsonRequired]
         private ISet<Cell> Cells { get; set; } = new HashSet<Cell>();
-        public Row(string id, string containerId, int rowNumber) : base(id, containerId)
+        public Row(string id, int rowNumber) : base(id)
         {
             this.RowNumber = rowNumber;
         }
@@ -40,7 +40,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
                 sbCellName.Append(this.Id).Append("_").Append("cell").Append("_")
                     .Append(colNumber).Append("_").Append(this.RowNumber);
 
-                newCell = new Cell(sbCellName.ToString(), "", colNumber, this.RowNumber, "");
+                newCell = new Cell(sbCellName.ToString(), colNumber, this.RowNumber, "");
 
                 this.Cells.Add(newCell);
             }

@@ -8,8 +8,8 @@ namespace MarquitoUtils.Web.React.Class.Select
         public string Value { get; set; } = "";
         public bool Selected { get; set; } = false;
         public string Type { get; private set; } = "checkbox";
-        protected CheckRadioBox(string id, string containerId, string value, bool selected, string type)
-            : base(id, containerId)
+        protected CheckRadioBox(string id, string value, bool selected, string type)
+            : base(id)
         {
             this.Value = value;
             this.Selected = selected;

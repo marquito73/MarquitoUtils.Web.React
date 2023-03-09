@@ -22,7 +22,6 @@ namespace MarquitoUtils.Web.React.Class.Components
         protected string ReactComponentName { get; set; }
         public string Id { get; set; }
         public string Name { get; set; }
-        public string ContainerId { get; set; }
         /// <summary>
         /// A list of css class of the component
         /// </summary>
@@ -36,11 +35,10 @@ namespace MarquitoUtils.Web.React.Class.Components
         /// </summary>
         public Dictionary<EnumWebEvent, WebFunction> Events { get; set; } 
             = new Dictionary<EnumWebEvent, WebFunction>();
-        public Component(string id, string containerId)
+        public Component(string id)
         {
             this.Id = id;
             this.Name = id;
-            this.ContainerId = containerId;
             this.ReactComponentName = this.GetType().Name;
         }
 
@@ -70,11 +68,30 @@ namespace MarquitoUtils.Web.React.Class.Components
         {
             StringBuilder sbScript = new StringBuilder();
 
-            sbScript.Append("<script>").Append(this.RC)
+            //https://www.w3schools.com/tags/ev_onload.asp
+
+            /*sbScript.Append("<script>").Append(this.RC)
                 .Append("window.addEventListener(\"DOMContentLoaded\", () => {").Append(this.RC)
                 .Append(script).Append(this.RC)
                 .Append("}, false);").Append(this.RC)
-                .Append("</script>");
+                .Append("</script>");*/
+
+            // Créer le script dans un div ici et on pourra se passer du container
+
+            sbScript.Append("<div id=\"").Append(this.Id).Append("_container\">").Append(this.RC)
+                .Append("<script>").Append(this.RC)
+                .Append("console.log('Test passage');").Append(this.RC)
+                .Append("if (document.readyState == 'complete' || document.readyState == 'interactive') {")
+                .Append(this.RC).Append("console.log('Test popup load');").Append(this.RC)
+                .Append(script).Append(this.RC)
+                .Append("} else {").Append(this.RC)
+                .Append("window.addEventListener(\"DOMContentLoaded\", () => {").Append(this.RC)
+                .Append("console.log('Test load');").Append(this.RC)
+                .Append(script).Append(this.RC)
+                .Append("}, false);").Append(this.RC)
+                .Append("}").Append(this.RC)
+                .Append("</script>").Append(this.RC)
+                .Append("</div>");
 
             return sbScript.ToString();
         }
@@ -83,13 +100,13 @@ namespace MarquitoUtils.Web.React.Class.Components
         {
             StringBuilder sbJson = new StringBuilder();
 
-            string jsonObject = WebUtils.GetSerializedObject(this)
+            string componentProps = WebUtils.GetSerializedObject(this)
                 .Replace("{}", "new Map()")
                 .Replace("[]", "new Array()");
 
             sbJson.Append("window").Append(".").Append("ReactWidgetFactory").Append(".")
                 .Append("create").Append(this.ReactComponentName).Append("(")
-                .Append(jsonObject)
+                .Append(componentProps).Append(", \"").Append(this.Id).Append("_container\"")
                 .Append(");");
 
             return this.GetStringInsideReactScript(sbJson.ToString());

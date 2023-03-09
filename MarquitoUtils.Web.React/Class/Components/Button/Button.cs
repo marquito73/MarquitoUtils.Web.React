@@ -12,7 +12,8 @@ namespace MarquitoUtils.Web.React.Class.Button
         public string BorderColor { get; set; } = "";
         public int CaptionSize { get; set; } = 15;
         public string Link { get; set; } = "";
-        public Button(string id, string containerId, string caption) : base(id, containerId)
+        public bool OpenInNewTab { get; set; } = false;
+        public Button(string id, string caption) : base(id)
         {
             this.Caption = caption;
         }

@@ -17,8 +17,8 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
         public EnumContentType ColType { get; set; }
         public bool IsEditable { get; set; }
         public EnumCheckMode CheckMode { get; set; }
-        public Column(string id, string containerId, string caption, int colNumber, EnumContentType colType) 
-            : base(id, containerId)
+        public Column(string id, string caption, int colNumber, EnumContentType colType) 
+            : base(id)
         {
             this.Caption = caption;
             this.ColNumber = colNumber;

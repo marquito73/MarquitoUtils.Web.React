@@ -8,7 +8,7 @@ namespace MarquitoUtils.Web.React.Class.Menu
     {
         public List<Tab> Tabs { get; set; } = new List<Tab>();
         private int NextTabNumber { get; set; } = 0;
-        public TabsBar(string id, string containerId) : base(id, containerId)
+        public TabsBar(string id) : base(id)
         {
             this.ReactComponentName = "Tabs";
         }
@@ -20,7 +20,7 @@ namespace MarquitoUtils.Web.React.Class.Menu
 
         public void AddTab(string caption, WebFunction onClickFunction)
         {
-            Tab newTab = new Tab(this.Id + this.NextTabNumber, "", caption, onClickFunction);
+            Tab newTab = new Tab(this.Id + this.NextTabNumber, caption, onClickFunction);
             this.Tabs.Add(newTab);
 
             this.NextTabNumber++;

@@ -34,7 +34,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
         protected ISet<Row> LoadedRows { get; } = new HashSet<Row>();
         [JsonRequired]
         protected ISet<int> LastLoadedRows { get; } = new HashSet<int>();
-        public ReactGrid(string id, string containerId, string rootUrl) : base(id, containerId)
+        public ReactGrid(string id, string rootUrl) : base(id)
         {
             this.ReactComponentName = "Grid";
             this.RootUrl = rootUrl;
@@ -163,7 +163,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             Column newColumn;
             if (Utils.IsEmpty(columns))
             {
-                newColumn = new Column(this.Id + "_col_" + colNumber, "", "", 
+                newColumn = new Column(this.Id + "_col_" + colNumber, "", 
                     colNumber, EnumContentType.Text);
 
                 this.Columns.Add(newColumn);
@@ -190,7 +190,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             Row newRow;
             if (Utils.IsEmpty(rows))
             {
-                newRow = new Row(this.Id + "_row_" + rowNumber, "", rowNumber);
+                newRow = new Row(this.Id + "_row_" + rowNumber, rowNumber);
 
                 this.LoadedRows.Add(newRow);
             }
