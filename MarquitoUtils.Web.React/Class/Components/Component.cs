@@ -69,27 +69,11 @@ namespace MarquitoUtils.Web.React.Class.Components
             StringBuilder sbScript = new StringBuilder();
 
             //https://www.w3schools.com/tags/ev_onload.asp
-
-            /*sbScript.Append("<script>").Append(this.RC)
-                .Append("window.addEventListener(\"DOMContentLoaded\", () => {").Append(this.RC)
-                .Append(script).Append(this.RC)
-                .Append("}, false);").Append(this.RC)
-                .Append("</script>");*/
-
-            // Créer le script dans un div ici et on pourra se passer du container
-
             sbScript.Append("<div id=\"").Append(this.Id).Append("_container\">").Append(this.RC)
                 .Append("<script>").Append(this.RC)
-                .Append("console.log('Test passage');").Append(this.RC)
-                .Append("if (document.readyState == 'complete' || document.readyState == 'interactive') {")
-                .Append(this.RC).Append("console.log('Test popup load');").Append(this.RC)
-                .Append(script).Append(this.RC)
-                .Append("} else {").Append(this.RC)
                 .Append("window.addEventListener(\"DOMContentLoaded\", () => {").Append(this.RC)
-                .Append("console.log('Test load');").Append(this.RC)
                 .Append(script).Append(this.RC)
                 .Append("}, false);").Append(this.RC)
-                .Append("}").Append(this.RC)
                 .Append("</script>").Append(this.RC)
                 .Append("</div>");
 
