@@ -14,9 +14,12 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
         public int RowNumber { get; set; }
         [JsonRequired]
         private ISet<Cell> Cells { get; set; } = new HashSet<Cell>();
-        public Row(string id, int rowNumber) : base(id)
+        [JsonRequired]
+        private ISet<Column> Columns { get; set; } = new HashSet<Column>();
+        public Row(string id, int rowNumber, ISet<Column> columns) : base(id)
         {
             this.RowNumber = rowNumber;
+            this.Columns = columns;
         }
 
         public override HtmlString GetAsReactJson()
@@ -24,7 +27,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             return new HtmlString(this.GetInitReactComponent());
         }
 
-        public Cell getCell(int colNumber)
+        public Cell GetCell(int colNumber)
         {
             ISet<Cell> cells = this.Cells
                 .Where(cell => cell.ColNumber.Equals(colNumber))
@@ -41,6 +44,12 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
                     .Append(colNumber).Append("_").Append(this.RowNumber);
 
                 newCell = new Cell(sbCellName.ToString(), colNumber, this.RowNumber, "");
+
+                Column column = this.Columns
+                    .Where(col => col.ColNumber.Equals(colNumber)).First();
+                newCell.CellType = column.ColType;
+                newCell.IsEditable = column.IsEditable;
+                newCell.ColName = column.Name;
 
                 this.Cells.Add(newCell);
             }

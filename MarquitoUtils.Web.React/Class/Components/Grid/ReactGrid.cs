@@ -190,7 +190,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             Row newRow;
             if (Utils.IsEmpty(rows))
             {
-                newRow = new Row(this.Id + "_row_" + rowNumber, rowNumber);
+                newRow = new Row(this.Id + "_row_" + rowNumber, rowNumber, this.Columns);
 
                 this.LoadedRows.Add(newRow);
             }
