@@ -1,6 +1,6 @@
 ﻿using MarquitoUtils.Main.Class.Tools;
-using MarquitoUtils.Web.Class.Communication;
-using MarquitoUtils.Web.Class.Tools;
+using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Components;
 using MarquitoUtils.Web.React.Class.Components.Grid;
 using Microsoft.AspNetCore.Mvc;

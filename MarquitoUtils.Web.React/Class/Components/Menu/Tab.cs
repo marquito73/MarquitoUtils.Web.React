@@ -1,4 +1,4 @@
-﻿using MarquitoUtils.Web.Class.Entities;
+﻿using MarquitoUtils.Web.React.Class.Entities;
 using MarquitoUtils.Web.React.Class.Components.Button;
 using Microsoft.AspNetCore.Html;
 

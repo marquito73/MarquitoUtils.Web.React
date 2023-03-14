@@ -1,4 +1,4 @@
-﻿using MarquitoUtils.Web.Class.Controllers;
+﻿using MarquitoUtils.Web.React.Class.Controllers;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

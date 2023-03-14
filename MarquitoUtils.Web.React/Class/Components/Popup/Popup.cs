@@ -1,7 +1,7 @@
-﻿using MarquitoUtils.Web.Class.Communication;
-using MarquitoUtils.Web.Class.Entities;
-using MarquitoUtils.Web.Class.Url;
-using MarquitoUtils.Web.Class.Views;
+﻿using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Entities;
+using MarquitoUtils.Web.React.Class.Url;
+using MarquitoUtils.Web.React.Class.Views;
 using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
 using System;

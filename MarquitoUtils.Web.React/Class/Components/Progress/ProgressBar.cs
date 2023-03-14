@@ -1,5 +1,5 @@
-﻿using MarquitoUtils.Web.Class.Entities;
-using MarquitoUtils.Web.Class.Enums;
+﻿using MarquitoUtils.Web.React.Class.Entities;
+using MarquitoUtils.Web.React.Class.Enums;
 using Microsoft.AspNetCore.Html;
 using System;
 using System.Collections.Generic;
