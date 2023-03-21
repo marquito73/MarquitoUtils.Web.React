@@ -1,11 +1,14 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Components;
 using MarquitoUtils.Web.React.Class.Components.General;
 using MarquitoUtils.Web.React.Class.Components.Grid;
 using MarquitoUtils.Web.React.Class.Enums;
 using MarquitoUtils.Web.React.Class.Tools;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
+using System.Reflection;
 using System.Text;
 
 namespace MarquitoUtils.Web.React.Class.Views
@@ -48,6 +51,43 @@ namespace MarquitoUtils.Web.React.Class.Views
                 .Replace('.', '/');
 
             return sbUrl.ToString();
+        }
+
+        public HtmlString GetReactComponent(Enum fieldKey)
+        {
+            HtmlString componentReactJson = new HtmlString("");
+
+            Component component = this.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+                .Where(field => Utils.IsNotNull(field.GetValue(this)))
+                .Where(field => field.GetValue(this).GetType().IsSubclassOf(typeof(Component))
+                || field.GetValue(this).GetType().IsEquivalentTo(typeof(Component)))
+                .Where(field =>
+                {
+                    FieldName fieldName = (FieldName)field.GetCustomAttribute(typeof(FieldName));
+
+                    return Utils.IsNotNull(fieldName)
+                        && Utils.GetAsInteger(fieldKey).Equals(fieldName.FieldNameEnum);
+                })
+                .Select(field => (Component)field.GetValue(this))
+                .FirstOrDefault();
+
+            if (Utils.IsNotNull(component))
+            {
+                componentReactJson = component.GetAsReactJson();
+            }
+
+            return componentReactJson;
+        }
+    }
+
+    public class FieldName : Attribute
+    {
+        public int FieldNameEnum { get; private set; }
+
+        public FieldName(int fieldNameEnum)
+        {
+            this.FieldNameEnum = fieldNameEnum;
         }
     }
 }
