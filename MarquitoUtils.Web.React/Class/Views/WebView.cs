@@ -1,4 +1,6 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
+using MarquitoUtils.Main.Class.Entities.Translation;
+using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Components;
@@ -24,6 +26,7 @@ namespace MarquitoUtils.Web.React.Class.Views
         public string ContainerIdForLoading { get; set; } = "";
         private List<string> ComponentAlreadyDeclared { get; set; } = new List<string>();
         protected bool LoadMainWebFileImport { get; set; } = false;
+
         protected WebView(WebDataEngine webDataEngine) : base(webDataEngine)
         {
             this.Init();
@@ -39,6 +42,7 @@ namespace MarquitoUtils.Web.React.Class.Views
         {
 
         }
+
         public abstract void Init();
 
         public string GetUrlAccess()
