@@ -54,6 +54,7 @@ namespace MarquitoUtils.Web.React.Class.Communication
             return entityService;
         }
 
+        /// <param name="translationFilePath">The path to access the translations</param>
         protected ContentResult GetContentResult(string content)
         {
             ContentResult result = new ContentResult();
