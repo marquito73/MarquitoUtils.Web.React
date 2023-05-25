@@ -2,11 +2,24 @@
 using MarquitoUtils.Web.React.Class.Components.Button;
 using Microsoft.AspNetCore.Html;
 
-namespace MarquitoUtils.Web.React.Class.Menu
+namespace MarquitoUtils.Web.React.Class.Components.Menu
 {
-    public class Tab : Button
+    /// <summary>
+    /// React tab
+    /// </summary>
+    public class Tab : Button.Button
     {
+        /// <summary>
+        /// Javascript function executed on tab's click
+        /// </summary>
         public WebFunction OnClick { get; set; } = new WebFunction();
+
+        /// <summary>
+        /// Tab
+        /// </summary>
+        /// <param name="id">Id of tab</param>
+        /// <param name="caption">His caption</param>
+        /// <param name="onClickFunction">Javascript function executed on tab's click</param>
         public Tab(string id, string caption, WebFunction onClickFunction) 
             : base(id, caption)
         {

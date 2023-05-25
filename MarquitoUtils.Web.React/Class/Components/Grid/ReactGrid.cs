@@ -11,42 +11,82 @@ using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Grid
 {
+    /// <summary>
+    /// A react data grid
+    /// </summary>
+    /// <typeparam name="Entity">The entity type for load this grid</typeparam>
     public class ReactGrid<Entity> : Component where Entity : class
     {
+        /// <summary>
+        /// Rows to load each time scroll end
+        /// </summary>
         [JsonRequired]
         protected int RowsToLoadEachTime { get; set; } = 20;
+        /// <summary>
+        /// Use infinite scroll ?
+        /// </summary>
         [JsonRequired]
         protected bool UseInfiniteScroll { get; set; } = false;
+        /// <summary>
+        /// Root url
+        /// </summary>
         [JsonRequired]
         private string RootUrl { get; set; }
+        /// <summary>
+        /// Total of rows
+        /// </summary>
         [JsonRequired]
         private int TotalOfRows { get; set; } = 0;
+        /// <summary>
+        /// Entities
+        /// </summary>
         [JsonRequired]
         protected ISet<Entity> Entities { get; } = new HashSet<Entity>();
-        /*[JsonRequired]
-        protected ISet<Entity> LoadedEntities { get; } = new HashSet<Entity>();*/
+        /// <summary>
+        /// Grid columns
+        /// </summary>
         [JsonRequired]
         protected ISet<Column> Columns { get; } = new HashSet<Column>();
+        /// <summary>
+        /// Grid rows
+        /// </summary>
         [JsonRequired]
         protected ISet<Row> Rows { get; } = new HashSet<Row>();
-        //protected ISet<Row> LastLoadedRows { get; } = new HashSet<Row>();
+        /// <summary>
+        /// Grid loaded rows
+        /// </summary>
         [JsonRequired]
         protected ISet<Row> LoadedRows { get; } = new HashSet<Row>();
+        /// <summary>
+        /// Last loaded rows ids
+        /// </summary>
         [JsonRequired]
         protected ISet<int> LastLoadedRows { get; } = new HashSet<int>();
+        
+        /// <summary>
+        /// React grid
+        /// </summary>
+        /// <param name="id">Id</param>
+        /// <param name="rootUrl">Root url</param>
         public ReactGrid(string id, string rootUrl) : base(id)
         {
             this.ReactComponentName = "Grid";
             this.RootUrl = rootUrl;
 
-            this.RootUrl = this.getCorrectFecthRootUrl(rootUrl);
+            this.RootUrl = this.GetCorrectFecthRootUrl(rootUrl);
 
             this.Rows.Clear();
 
             this.InitGrid();
+            this.InitColumns();
         }
 
-        private string getCorrectFecthRootUrl(string rootUrl)
+        /// <summary>
+        /// Get the correct fetch root url
+        /// </summary>
+        /// <param name="rootUrl">The root url</param>
+        /// <returns>The correct fetch root url</returns>
+        private string GetCorrectFecthRootUrl(string rootUrl)
         {
             if (rootUrl.Contains("localhost:"))
             {
@@ -73,50 +113,73 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             return new HtmlString(this.GetInitReactComponent());
         }
 
-        public void addEntity(Entity newEntity)
+        /// <summary>
+        /// Add an entity
+        /// </summary>
+        /// <param name="newEntity">A new entity</param>
+        public void AddEntity(Entity newEntity)
         {
             this.Entities.Add(newEntity);
         }
 
-        public void addEntities(IEnumerable<Entity> newEntities)
+        /// <summary>
+        /// Add entities
+        /// </summary>
+        /// <param name="newEntities">New entities</param>
+        public void AddEntities(IEnumerable<Entity> newEntities)
         {
             foreach (Entity newEntity in newEntities)
             {
-                this.addEntity(newEntity);
+                this.AddEntity(newEntity);
             }
         }
 
+        /// <summary>
+        /// Init grid
+        /// </summary>
         protected virtual void InitGrid()
         {
 
         }
 
+        /// <summary>
+        /// Init columns
+        /// </summary>
+        protected virtual void InitColumns()
+        {
+
+        }
+
+        /// <summary>
+        /// Load row
+        /// </summary>
+        /// <param name="entityToLoad">Entity to load</param>
+        /// <returns>The row loaded</returns>
         protected virtual Row LoadRow(Entity entityToLoad)
         {
-            //return this.LoadRow(entityToLoad);
             return null;
         }
 
+        /// <summary>
+        /// Init data loading
+        /// </summary>
         public void InitLoading()
         {
-            /*if (Utils.IsEmpty(this.Rows))
-            {
-                this.LoadNextRows();
-            }*/
             foreach (Entity entity in this.Entities)
             {
                 Row rowAdded = this.LoadRow(entity);
             }
-
-            this.getNextRows();
+            if (this.UseInfiniteScroll)
+            {
+                this.GetNextRows();
+            }
         }
 
-        /*public ISet<Row> getLastLoadedRows()
-        {
-            return new HashSet<Row>(this.LoadedRows);
-        }*/
-
-        public ISet<Row> getNextRows()
+        /// <summary>
+        /// Load and return next rows
+        /// </summary>
+        /// <returns>Next rows</returns>
+        public ISet<Row> GetNextRows()
         {
             ISet<Row> rows = this.LoadedRows.Where(row => !this.LastLoadedRows.Contains(row.RowNumber))
                 .Take(this.RowsToLoadEachTime)
@@ -131,29 +194,11 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             return rows;
         }
 
-        /*public void LoadNextRows()
-        {
-            ISet<Entity> entitiesToLoad = this.Entities
-                .Where(entityToLoad => !this.LoadedEntities.Contains(entityToLoad))
-                .ToHashSet();
-
-            if (this.UseInfiniteScroll)
-            {
-                entitiesToLoad = entitiesToLoad.Take(this.RowsToLoadEachTime).ToHashSet();
-            }
-
-            this.LoadedEntities.UnionWith(entitiesToLoad);
-
-            foreach (Entity entity in entitiesToLoad)
-            {
-                Row rowAdded = this.LoadRow(entity);
-                this.Rows.Add(rowAdded);
-                this.LoadedRows.Add(rowAdded);
-            }
-        }*/
-
-        //public string Get
-
+        /// <summary>
+        /// Get (and create if not exist) column
+        /// </summary>
+        /// <param name="colNumber">Column number</param>
+        /// <returns>The column found / created</returns>
         protected Column GetColumn(int colNumber)
         {
             ISet<Column> columns = this.Columns
@@ -176,11 +221,20 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             return newColumn;
         }
 
-        protected Row getNewRow()
+        /// <summary>
+        /// Get new row
+        /// </summary>
+        /// <returns>New row</returns>
+        protected Row GetNewRow()
         {
             return this.GetRow(this.LoadedRows.Count);
         }
 
+        /// <summary>
+        /// Get (and create if not exist) row
+        /// </summary>
+        /// <param name="rowNumber">Row number</param>
+        /// <returns>The row found / created</returns>
         protected Row GetRow(int rowNumber)
         {
             ISet<Row> rows = this.LoadedRows
@@ -193,6 +247,11 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
                 newRow = new Row(this.Id + "_row_" + rowNumber, rowNumber, this.Columns);
 
                 this.LoadedRows.Add(newRow);
+
+                if (!this.UseInfiniteScroll)
+                {
+                    this.Rows.Add(newRow);
+                }
             }
             else
             {
@@ -202,11 +261,19 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             return newRow;
         }
 
+        /// <summary>
+        /// Get number of columns
+        /// </summary>
+        /// <returns>Number of columns</returns>
         private string GetNumberOfColumns()
         {
             return Utils.GetAsString(this.Columns.Count);
         }
 
+        /// <summary>
+        /// Get number of rows
+        /// </summary>
+        /// <returns>Number of rows</returns>
         private string GetNumberOfRows()
         {
             return Utils.GetAsString(this.Rows.Count);

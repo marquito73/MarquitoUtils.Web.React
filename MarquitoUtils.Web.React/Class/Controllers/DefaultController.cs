@@ -1,4 +1,5 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
+using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Tools.Logger;
 using MarquitoUtils.Web.React.Class.Attributes;
@@ -17,6 +18,9 @@ using System.Text;
 
 namespace MarquitoUtils.Web.React.Class.Controllers
 {
+    /// <summary>
+    /// Default controller
+    /// </summary>
     [Route("home")]
     public abstract class DefaultController : Controller
     {
@@ -27,13 +31,17 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         protected string ActionDefaultLocation { get; set; } = "";
         protected string ViewDefaultLocation { get; set; } = "";
         protected string MainReactFile { get; set; } = "/dist/main.js";
-        protected DbContext DbContext { get; set; }
+        protected DefaultDbContext DbContext { get; set; }
 
         protected DefaultController(ILogger<DefaultController> logger)
         {
             this._logger = logger;
         }
 
+        /// <summary>
+        /// Return index
+        /// </summary>
+        /// <returns>The index view</returns>
         [Route("")]
         [Route("index")]
         [Route("~/")]
@@ -42,6 +50,10 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Exec ajax call, and return result
+        /// </summary>
+        /// <returns>Result of ajax call</returns>
         [Route("ajax")]
         [RequestSizeLimit(1_000_000_000)]
         [AllowCrossSiteJson]
@@ -50,9 +62,16 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return this.ExecAjax(Assembly.GetExecutingAssembly());
         }
 
+        /// <summary>
+        /// Exec ajax call, and return result
+        /// </summary>
+        /// <param name="assembly">The assembly where the ajax is located</param>
+        /// <returns>Result of ajax call</returns>
         protected IActionResult ExecAjax(Assembly assembly)
         {
             IActionResult ajaxResult = new ContentResult();
+
+            this.InitDbContext();
 
             // Parameters in query
             List<Parameter> parameters = AjaxHelper.GetValuesFromUrl(this.Request.QueryString.Value);
@@ -92,6 +111,12 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return ajaxResult;
         }
 
+        /// <summary>
+        /// Exec action call, and return result
+        /// </summary>
+        /// <param name="action_name">Action name</param>
+        /// <param name="action_action">Action action</param>
+        /// <returns>The action result</returns>
         [Route("action")]
         [AllowCrossSiteJson]
         public virtual IActionResult ExecAction(string action_name, string action_action)
@@ -99,9 +124,18 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return this.ExecAction(action_name, action_action, Assembly.GetExecutingAssembly());
         }
 
+        /// <summary>
+        /// Exec action call, and return result
+        /// </summary>
+        /// <param name="action_name">Action name</param>
+        /// <param name="action_action">Action action</param>
+        /// <param name="assembly">The assembly where the action is located</param>
+        /// <returns>The action result</returns>
         protected IActionResult ExecAction(string action_name, string action_action, Assembly assembly)
         {
             string actionResult = "";
+
+            this.InitDbContext();
 
             List<Parameter> parameters = ActionHelper.GetValuesFromUrl(this.Request.QueryString.Value);
 
@@ -135,6 +169,11 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return Content(actionResult);
         }
 
+        /// <summary>
+        /// Get view
+        /// </summary>
+        /// <param name="frag_name">View's name</param>
+        /// <returns>A view</returns>
         [Route("frag")]
         [AllowCrossSiteJson]
         public virtual IActionResult GetFrag(string frag_name)
@@ -142,9 +181,18 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return this.GetFrag(frag_name, Assembly.GetExecutingAssembly());
         }
 
+        /// <summary>
+        /// Get view
+        /// </summary>
+        /// <param name="frag_name">View's name</param>
+        /// <param name="assembly">The assembly where the view is located</param>
+        /// <returns>A view</returns>
         protected IActionResult GetFrag(string frag_name, Assembly assembly)
         {
             IActionResult viewResult = new ContentResult();
+
+            this.InitDbContext();
+
             // Params of the request
             List<Parameter> parameters = ViewHelper.GetValuesFromUrl(this.Request.QueryString.Value);
             // If frag_name not found, try found viewName inside parameters
@@ -189,6 +237,12 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return viewResult;
         }
 
+        /// <summary>
+        /// Get view result
+        /// </summary>
+        /// <param name="viewResult">View result</param>
+        /// <param name="webView">View</param>
+        /// <returns>View result<</returns>
         private JsonResult GetViewResult(PartialViewResult viewResult, WebView webView)
         {
             Dictionary<string, object> viewResultJson = new Dictionary<string, object>();
@@ -210,6 +264,11 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return sbHeaders.ToString();
         }
 
+        /// <summary>
+        /// Get content result
+        /// </summary>
+        /// <param name="content">The content</param>
+        /// <returns>Content result</returns>
         protected ContentResult GetContentResult(string content)
         {
             ContentResult result = new ContentResult();
@@ -219,11 +278,22 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Get JSON result
+        /// </summary>
+        /// <param name="content">The content</param>
+        /// <returns>JSON content result</returns>
         protected JsonResult GetJsonResult(object content)
         {
             return new JsonResult(content);
         }
 
+        /// <summary>
+        /// Get file result
+        /// </summary>
+        /// <param name="fileBytes">The file content</param>
+        /// <param name="fileName">The file name</param>
+        /// <returns>File result</returns>
         protected FileContentResult GetFileResult(byte[] fileBytes, string fileName)
         {
             FileContentResult result = new FileContentResult(fileBytes, "application/octet-stream");
@@ -233,6 +303,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Init database context
+        /// </summary>
         protected abstract void InitDbContext();
     }
 }

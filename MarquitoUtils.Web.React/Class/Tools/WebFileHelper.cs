@@ -10,7 +10,7 @@ using MarquitoUtils.Main.Class.Enums;
 
 namespace MarquitoUtils.Web.React.Class.Tools
 {
-    public class WebFileHelper
+    public class WebFileHelper : FileHelper
     {
         private static string STATIC_DIR = "StaticWebComponents";
 
@@ -24,7 +24,6 @@ namespace MarquitoUtils.Web.React.Class.Tools
         private static string COLOR_FILENAME = "Colors";
 
         private static string COLOR_NAMESPACE = "MarquitoUtils.Web.css.Utility";
-        private static List<string> EXCLUDED_FILES = new List<string> { ".Files.Web.Config." };
 
         /// <summary>
         /// Get
@@ -42,7 +41,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
 
         public static WebConfig ReadConfig(Assembly assembly)
         {
-            return WebConfigReader.readWebConfigDataFromFile(@"D:\Users\TB\Visual\source\repos\MarquitoUtils.Web\MarquitoUtils.Web\Files\Web\Config\DefaultWebConfig.xml", 
+            return WebConfigReader.readWebConfigDataFromFile(@"D:\Users\USER_TEMP\Visual\source\repos\MarquitoUtils.Web\MarquitoUtils.Web\Files\Web\Config\DefaultWebConfig.xml", 
                 assembly);
         }
 
@@ -50,47 +49,9 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// Get list of static files
         /// </summary>
         /// <returns>List of static files</returns>
-        public static List<CustomFile> GetStaticFiles()
+        public static List<CustomFile> GetWebStaticFiles()
         {
-            List<CustomFile> staticFiles = new List<CustomFile>();
-
-            // Assembly
-            Assembly currentAssembly = Assembly.GetExecutingAssembly();
-
-            foreach (string name in currentAssembly.GetManifestResourceNames())
-            {
-                if (name.Contains(".Files.Web.") && CheckIfFileNotInExcludedFiles(name))
-                {
-                    string nameSpace = GetWithoutFilename(name);
-                    string filenameWithExt = GetFilename(name);
-                    //staticFilesNames.Add(nameSpace, fileName);
-
-                    // Filename
-                    string filename = filenameWithExt.Split(".")[0];
-                    // Extension
-                    string extension = filenameWithExt.Split(".")[1];
-
-                    object content = GetResourceContent(currentAssembly, nameSpace, filename, extension);
-                    // Object represent filename with his data
-                    CustomFile staticFile;
-
-                    if (content.GetType().Equals(typeof(string))) {
-                        staticFile = new CustomFile(filename, extension, nameSpace, 
-                            Utils.GetAsString(content));
-                    }
-                    else
-                    {
-                        staticFile = new CustomFile(filename, extension, nameSpace, 
-                            Utils.GetAsBytes(content));
-                    }
-
-
-                    //File staticFile = new File(filename, extension, nameSpace, content);
-                    staticFile.RemoveStringFromNameSpace("Files.Web.");
-
-                    staticFiles.Add(staticFile);
-                }
-            }
+            List<CustomFile> staticFiles = GetStaticFiles(STATIC_FILE_EXT_AS_TEXT, ".Files.Web.");
 
             // List of colors
             List<EnumColor> colorList = EnumClass.GetEnumList<EnumColor, EnumColorAttr>();
@@ -145,54 +106,6 @@ namespace MarquitoUtils.Web.React.Class.Tools
             return staticFile;
         }
 
-        /// <summary>
-        /// Get resource file content from an assembly
-        /// </summary>
-        /// <param name="assembly">The assembly contain the file</param>
-        /// <param name="nameSpace">The namespace of the file</param>
-        /// <param name="filename">The filename</param>
-        /// <param name="extension">The filename</param>
-        /// <returns>The content of the file</returns>
-        private static object GetResourceContent(Assembly assembly, string nameSpace, 
-            string filename, string extension)
-        {
-            string resourceName = nameSpace + "." + filename + "." + extension;
-            object resource = null;
-            using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-            {
-
-                if (STATIC_FILE_EXT_AS_TEXT.Contains(extension))
-                {
-                    // We can read file as text
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        resource = reader.ReadToEnd();
-                    }
-                }
-                else
-                {
-                    resource = Utils.ReadAllBytes(stream);
-                }
-            }
-            return resource;
-        }
-
-        private static string GetFilename(string namespaceAndName)
-        {
-            string[] names = namespaceAndName.Split('.');
-
-            int count = names.Length;
-
-            return names[count - 2] + "." + names[count - 1];
-        }
-
-        private static string GetWithoutFilename(string namespaceAndName)
-        {
-            string filename = GetFilename(namespaceAndName);
-
-            return namespaceAndName.Replace("." + filename, "");
-        }
-
         public static string WriteWebTempFiles(List<CustomFile> staticsFiles)
         {
             // Create temp folder for store statics files
@@ -243,7 +156,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
         {
             WebFileImport webFileImport = new WebFileImport();
 
-            List<CustomFile> staticsFiles = GetStaticFiles();
+            List<CustomFile> staticsFiles = GetWebStaticFiles();
             // Import css files
             staticsFiles.Where(file => file.Extension.Equals("css"))
                 .ToList()
@@ -280,20 +193,6 @@ namespace MarquitoUtils.Web.React.Class.Tools
                 containerIdForLoading, loadingIcon.Attr().IconCss) + ";");
 
             return webFileImport;
-        }
-
-        private static bool CheckIfFileNotInExcludedFiles(string fileName)
-        {
-            bool fileNotInExcludedFiles = true;
-
-            foreach (string excludedFileName in EXCLUDED_FILES)
-            {
-                if (fileName.Contains(excludedFileName)) {
-                    fileNotInExcludedFiles = false;
-                }
-            }
-
-            return fileNotInExcludedFiles;
         }
     }
 }

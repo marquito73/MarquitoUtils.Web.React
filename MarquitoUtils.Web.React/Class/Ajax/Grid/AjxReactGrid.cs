@@ -9,28 +9,51 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MarquitoUtils.Main.Class.Logger;
 
 namespace MarquitoUtils.Web.React.Class.Ajax.Grid
 {
+    /// <summary>
+    /// Ajax for a React grid, called for get next rows, manage filters, etc ...
+    /// </summary>
     public class AjxReactGrid : WebAjax
     {
+        /// <summary>
+        /// Data type can be returned to client
+        /// </summary>
         private enum GridDataType
         {
+            /// <summary>
+            /// Message
+            /// </summary>
             MESSAGE,
+            /// <summary>
+            /// New rows
+            /// </summary>
             ROWS
         }
 
+        /// <summary>
+        /// Dictionnary contain data returned to client
+        /// </summary>
         private Dictionary<GridDataType, object> GridData { get; set; }
             = new Dictionary<GridDataType, object>();
 
+        /// <summary>
+        /// Ajax for a React grid, called for get next rows, manage filters, etc ...
+        /// </summary>
+        /// <param name="webDataEngine">The web data engine</param>
         public AjxReactGrid(WebDataEngine webDataEngine) : base(webDataEngine)
         {
         }
 
+        /// <summary>
+        /// Execute the ajax grid request
+        /// </summary>
+        /// <param name="ajaxAction">Ajax grid action</param>
+        /// <returns></returns>
         public override IActionResult Exec(string ajaxAction)
         {
-            //this.WebDataEngine.SetSessionValue(this.ReactGrid.Id, this.ReactGrid);
-
             string gridId = this.WebDataEngine.GetStringFromQuery("_gridId");
 
             if (Utils.IsNotEmpty(gridId))
@@ -44,11 +67,13 @@ namespace MarquitoUtils.Web.React.Class.Ajax.Grid
                     switch (ajaxAction)
                     {
                         case "getNextRows":
-                            this.GridData.Add(GridDataType.ROWS, reactGrid.getNextRows());
+                            this.GridData.Add(GridDataType.ROWS, reactGrid.GetNextRows());
+                            Logger.Info("Return grid rows to client");
                             break;
                         case "":
                         default:
                             this.GridData.Add(GridDataType.MESSAGE, "Grid action not found");
+                            Logger.Error("Grid action not found");
                             break;
                     }
                     this.WebDataEngine.SetSessionValue(reactGrid.Id, reactGrid);
@@ -56,16 +81,22 @@ namespace MarquitoUtils.Web.React.Class.Ajax.Grid
                 else
                 {
                     this.GridData.Add(GridDataType.MESSAGE, "Grid not found in Session scope");
+                    Logger.Error("Grid not found in Session scope");
                 }
             }
             else
             {
                 this.GridData.Add(GridDataType.MESSAGE, "Grid id not found in query");
+                Logger.Error("Grid id not found in query");
             }
 
             return GetGridData();
         }
 
+        /// <summary>
+        /// Return grid data
+        /// </summary>
+        /// <returns>Grid data</returns>
         private IActionResult GetGridData()
         {
             Dictionary<string, object> gridData = new Dictionary<string, object>();

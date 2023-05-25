@@ -35,6 +35,11 @@ namespace MarquitoUtils.Web.React.Class.Components
         /// </summary>
         public Dictionary<EnumWebEvent, WebFunction> Events { get; set; } 
             = new Dictionary<EnumWebEvent, WebFunction>();
+        
+        /// <summary>
+        /// React component base class
+        /// </summary>
+        /// <param name="id"></param>
         public Component(string id)
         {
             this.Id = id;
@@ -42,27 +47,12 @@ namespace MarquitoUtils.Web.React.Class.Components
             this.ReactComponentName = this.GetType().Name;
         }
 
+        /// <summary>
+        /// Get react component as script contain json data to invoke react component
+        /// </summary>
+        /// <returns>React component as script contain json data to invoke react component</returns>
         public abstract HtmlString GetAsReactJson();
 
-        /*public string getAsReactJson()
-        {
-            return Utils.GetSerializedObject(this);
-        }*/
-
-        /*public override HtmlString getAsReactJson()
-        {
-            StringBuilder sbJson = new StringBuilder();
-
-            sbJson.Append("<script>")
-                .Append("window.addEventListener(\"DOMContentLoaded\", function() {")
-                .Append("window.ReactWidgetFactory.createTextBox(")
-                .Append(Utils.GetSerializedObject(this))
-                .Append(");")
-                .Append("}, false);")
-                .Append("</script>");
-
-            return new HtmlString(sbJson.ToString());
-        }*/
 
         protected string GetStringInsideReactScript(string script)
         {

@@ -1,37 +1,63 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Translation;
+using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Sql;
+using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static MarquitoUtils.Main.Class.Enums.EnumLang;
 
 namespace MarquitoUtils.Web.React.Class.Communication
 {
+    /// <summary>
+    /// Common class for views, ajax and actions
+    /// </summary>
     public abstract class WebClass
     {
-        public WebDataEngine WebDataEngine { get; private set; }
-
+        /// <summary>
+        /// The web data engine
+        /// </summary>
+        protected WebDataEngine WebDataEngine { get; private set; }
+        /// <summary>
+        /// The translate service
+        /// </summary>
         private ITranslateService TranslateService { get; set; }
+        /// <summary>
+        /// Current language
+        /// </summary>
+        protected CultureInfo CurrentLanguage { get; private set; }
 
+        /// <summary>
+        /// Web class
+        /// </summary>
+        /// <param name="webDataEngine">The web data engine</param>
         public WebClass(WebDataEngine webDataEngine)
         {
             this.WebDataEngine = webDataEngine;
+            this.CurrentLanguage = webDataEngine.CurrentLanguage;
             this.InitTranslations(Assembly.GetEntryAssembly());
         }
-        // TODO Déterminer les implémentations
-        public T GetService<T>() where T : EntityService
+        // TODO Determinate how to find implementations
+        public T GetService<T>() where T : IEntityService
         {
             return default(T);
         }
 
-        public T GetDbContext<T>() where T : DbContext
+        /// <summary>
+        /// Get the database context
+        /// </summary>
+        /// <typeparam name="T">Type of database context</typeparam>
+        /// <returns>The database context</returns>
+        public T GetDbContext<T>() where T : DefaultDbContext
         {
             T result = default(T);
 
@@ -43,9 +69,14 @@ namespace MarquitoUtils.Web.React.Class.Communication
             return result;
         }
 
-        public EntityService GetEntityService()
+        /// <summary>
+        /// Get entity service
+        /// </summary>
+        /// <returns>The entity service</returns>
+        /// <exception cref="Exception"></exception>
+        public IEntityService GetEntityService()
         {
-            EntityService entityService = new EntityServiceImpl();
+            IEntityService entityService = new EntityService();
 
             if (Utils.IsNotNull(this.WebDataEngine.DbContext))
             {
@@ -81,11 +112,23 @@ namespace MarquitoUtils.Web.React.Class.Communication
             }
         }
 
+        /// <summary>
+        /// Get translation
+        /// </summary>
+        /// <typeparam name="T">The class need translation</typeparam>
+        /// <param name="translateKey">The translate key</param>
+        /// <returns>The translation</returns>
         protected string GetTranslation<T>(string translateKey) where T : class
         {
-            return this.TranslateService.GetTranslation<T>(translateKey);
+            enumLang lang = this.TranslateService.GetLanguageWithCultureInfo(this.CurrentLanguage); 
+            return this.TranslateService.GetTranslation<T>(translateKey, lang);
         }
 
+        /// <summary>
+        /// Get content result
+        /// </summary>
+        /// <param name="content">The content</param>
+        /// <returns>Content result</returns>
         protected ContentResult GetContentResult(string content)
         {
             ContentResult result = new ContentResult();
@@ -95,11 +138,22 @@ namespace MarquitoUtils.Web.React.Class.Communication
             return result;
         }
 
+        /// <summary>
+        /// Get JSON content result
+        /// </summary>
+        /// <param name="content">The content</param>
+        /// <returns>JSON content result</returns>
         protected JsonResult GetJsonResult(object content)
         {
             return new JsonResult(content);
         }
 
+        /// <summary>
+        /// Get file content result
+        /// </summary>
+        /// <param name="fileBytes">File bytes</param>
+        /// <param name="fileName">File name</param>
+        /// <returns>File content result</returns>
         protected FileContentResult GetFileResult(byte[] fileBytes, string fileName)
         {
             FileContentResult result = new FileContentResult(fileBytes, "application/octet-stream");
