@@ -7,6 +7,7 @@ using MarquitoUtils.Web.React.Class.Components;
 using MarquitoUtils.Web.React.Class.Components.General;
 using MarquitoUtils.Web.React.Class.Components.Grid;
 using MarquitoUtils.Web.React.Class.Enums;
+using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Http;
@@ -38,7 +39,25 @@ namespace MarquitoUtils.Web.React.Class.Views
                 this.WebFileImport = newWebFileImport;
             }
         }
+
+        protected WebView(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
+        {
+            this.Init();
+            if (this.LoadMainWebFileImport)
+            {
+                WebFileImport newWebFileImport = WebFileHelper.GetMainWebFileImport(this.LoadingIcon,
+                    this.ContainerIdForLoading);
+                newWebFileImport.Merge(this.WebFileImport);
+                this.WebFileImport = newWebFileImport;
+            }
+        }
+
         protected WebView(HttpContext webContext) : this(new WebDataEngine(webContext))
+        {
+
+        }
+
+        protected WebView(HttpContext webContext, NotifyHubProxy notifyHubProxy) : this(new WebDataEngine(webContext), notifyHubProxy)
         {
 
         }

@@ -4,6 +4,7 @@ using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
+using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,10 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// Current language
         /// </summary>
         protected CultureInfo CurrentLanguage { get; private set; }
+        /// <summary>
+        /// Notify hub proxy, for send and get data with signalR
+        /// </summary>
+        protected NotifyHubProxy NotifyHubProxy { get; set; }
 
         /// <summary>
         /// Web class
@@ -46,6 +51,12 @@ namespace MarquitoUtils.Web.React.Class.Communication
             this.CurrentLanguage = webDataEngine.CurrentLanguage;
             this.InitTranslations(Assembly.GetEntryAssembly());
         }
+
+        public WebClass(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : this(webDataEngine)
+        {
+            this.NotifyHubProxy = notifyHubProxy;
+        }
+
         // TODO Determinate how to find implementations
         public T GetService<T>() where T : IEntityService
         {

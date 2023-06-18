@@ -5,10 +5,12 @@ using MarquitoUtils.Main.Class.Tools.Logger;
 using MarquitoUtils.Web.React.Class.Attributes;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Components.General;
+using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Views;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -24,19 +26,60 @@ namespace MarquitoUtils.Web.React.Class.Controllers
     [Route("home")]
     public abstract class DefaultController : Controller
     {
+        /// <summary>
+        /// Notify hub proxy, for communication with clients
+        /// </summary>
+        protected NotifyHubProxy NotifyHubProxy { get; private set; }
         protected ILogger<DefaultController> _logger;
+        /// <summary>
+        /// Ajax default location
+        /// </summary>
         protected string AjaxDefaultLocation { get; set; } = "";
+        /// <summary>
+        /// Ajax defaut location path
+        /// </summary>
         protected string MainAjaxLocationPath { get; set; } = "MarquitoUtils.Web.React.Class.Ajax";
         protected Assembly MainAssembly { get; set; } = Assembly.GetExecutingAssembly();
+        /// <summary>
+        /// Action default location
+        /// </summary>
         protected string ActionDefaultLocation { get; set; } = "";
+        /// <summary>
+        /// View default location
+        /// </summary>
         protected string ViewDefaultLocation { get; set; } = "";
+        /// <summary>
+        /// Main react file
+        /// </summary>
         protected string MainReactFile { get; set; } = "/dist/main.js";
+        /// <summary>
+        /// Db context
+        /// </summary>
         protected DefaultDbContext DbContext { get; set; }
 
+        /// <summary>
+        /// Default controller
+        /// </summary>
+        /// <param name="logger">Logger</param>
         protected DefaultController(ILogger<DefaultController> logger)
         {
             this._logger = logger;
         }
+
+        /// <summary>
+        /// Default controller
+        /// </summary>
+        /// <param name="logger">Logger</param>
+        /// <param name="notifyHub">Notify hub</param>
+        protected DefaultController(ILogger<DefaultController> logger, IHubContext<NotifyHub.NotifyHub> notifyHub) : this(logger)
+        {
+            this.NotifyHubProxy = new NotifyHubProxy(notifyHub);
+        }
+
+        /// <summary>
+        /// Init database context
+        /// </summary>
+        protected abstract void InitDbContext();
 
         /// <summary>
         /// Return index
@@ -99,7 +142,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             if (Utils.IsNotNull(ajax))
             {
                 // Create ajax instance
-                WebAjax webAjax = (WebAjax)Activator.CreateInstance(ajax, webDataEngine);
+                WebAjax webAjax = (WebAjax)Activator.CreateInstance(ajax, webDataEngine, this.NotifyHubProxy);
                 // Execute the ajax
                 ajaxResult = webAjax.Exec(ajax_action);
             }
@@ -157,7 +200,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             if (Utils.IsNotNull(action))
             {
                 // Init action
-                WebAction webAction = (WebAction)Activator.CreateInstance(action, webDataEngine);
+                WebAction webAction = (WebAction)Activator.CreateInstance(action, webDataEngine, this.NotifyHubProxy);
 
                 actionResult = webAction.Exec(action_action);
             }
@@ -176,9 +219,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <returns>A view</returns>
         [Route("frag")]
         [AllowCrossSiteJson]
-        public virtual IActionResult GetFrag(string frag_name)
+        public virtual IActionResult GetView(string frag_name)
         {
-            return this.GetFrag(frag_name, Assembly.GetExecutingAssembly());
+            return this.GetView(frag_name, Assembly.GetExecutingAssembly());
         }
 
         /// <summary>
@@ -187,7 +230,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <param name="frag_name">View's name</param>
         /// <param name="assembly">The assembly where the view is located</param>
         /// <returns>A view</returns>
-        protected IActionResult GetFrag(string frag_name, Assembly assembly)
+        protected IActionResult GetView(string frag_name, Assembly assembly)
         {
             IActionResult viewResult = new ContentResult();
 
@@ -220,7 +263,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 // Call action before the view
                 this.ExecAction("", "", assembly);
                 // Create view instance
-                webView = (WebView)Activator.CreateInstance(view, webDataEngine);
+                webView = (WebView)Activator.CreateInstance(view, webDataEngine, this.NotifyHubProxy);
                 webView.WebFileImport.ImportJs.Add(this.MainReactFile);
                 // Store view in context for get data inside the view
                 this.HttpContext.Items.Add("WebView", webView);
@@ -235,33 +278,6 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             }
 
             return viewResult;
-        }
-
-        /// <summary>
-        /// Get view result
-        /// </summary>
-        /// <param name="viewResult">View result</param>
-        /// <param name="webView">View</param>
-        /// <returns>View result<</returns>
-        private JsonResult GetViewResult(PartialViewResult viewResult, WebView webView)
-        {
-            Dictionary<string, object> viewResultJson = new Dictionary<string, object>();
-
-            viewResultJson.Add("HEAD", this.ConcatenateViewHeaders(webView.WebFileImport));
-            viewResultJson.Add("BODY", viewResult);
-
-            return this.GetJsonResult(viewResultJson);
-        }
-
-        private string ConcatenateViewHeaders(WebFileImport webFileImport)
-        {
-            StringBuilder sbHeaders = new StringBuilder();
-
-            /*sbHeaders.Append(webFileImport.GetCssImport()).Append("\n")
-                .Append(webFileImport.GetJavascriptImport()).Append("\n")
-                .Append(webFileImport.GetJavascriptFunctions());*/
-
-            return sbHeaders.ToString();
         }
 
         /// <summary>
@@ -302,10 +318,5 @@ namespace MarquitoUtils.Web.React.Class.Controllers
 
             return result;
         }
-
-        /// <summary>
-        /// Init database context
-        /// </summary>
-        protected abstract void InitDbContext();
     }
 }

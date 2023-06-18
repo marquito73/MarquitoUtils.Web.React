@@ -151,8 +151,17 @@ namespace MarquitoUtils.Web.React.Class.Tools
             }
         }
 
-        // TODO Récupérer les fichier du cache, préalablement stockés, pour pouvoir les ajouter dynamiquement
         public static WebFileImport GetMainWebFileImport(EnumIcon loadingIcon, string containerIdForLoading)
+        {
+            WebFileImport webFileImport = new WebFileImport();
+
+            webFileImport.ImportJs.Add("~/lib/microsoft/signalr/dist/browser/signalr.js");
+
+            return webFileImport;
+        }
+
+        // TODO Récupérer les fichier du cache, préalablement stockés, pour pouvoir les ajouter dynamiquement
+        /*public static WebFileImport GetMainWebFileImport(EnumIcon loadingIcon, string containerIdForLoading)
         {
             WebFileImport webFileImport = new WebFileImport();
 
@@ -193,6 +202,6 @@ namespace MarquitoUtils.Web.React.Class.Tools
                 containerIdForLoading, loadingIcon.Attr().IconCss) + ";");
 
             return webFileImport;
-        }
+        }*/
     }
 }

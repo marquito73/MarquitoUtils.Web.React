@@ -5,14 +5,21 @@ using MarquitoUtils.Web.React.Class.Enums;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Service.Files;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Web.React.Class.Communication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
+using JavaScriptEngineSwitcher.V8;
+using React.AspNet;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -31,38 +38,122 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// The database context
         /// </summary>
         protected T DbContext { get; private set; }
+        /// <summary>
+        /// The notify hub name
+        /// </summary>
+        protected string NotifyHubName { get; private set; }
 
         /// <summary>
         /// Default startup class
         /// </summary>
         /// <param name="configuration">Configuration properties</param>
+        /// <param name="notifyHubName">The notify hub name</param>
         /// <param name="executeScripts">Execute sql scripts ?</param>
-        public DefaultStartup(IConfiguration configuration, bool executeScripts = false)
+        public DefaultStartup(IConfiguration configuration, string notifyHubName = "", bool executeScripts = false)
         {
             this.Configuration = configuration;
+            this.NotifyHubName = notifyHubName;
 
             if (executeScripts)
             {
-                SqlConnectionBuilder connectionBuilder = this.SetupSqlServerConnection();
-                this.SqlScriptService = new SqlScriptService(connectionBuilder);
-                // Init startup db context
-                this.DbContext = DefaultDbContext.GetDbContext<T>(connectionBuilder);
-                this.SqlScriptService.EntityService = new EntityService();
-                this.SqlScriptService.EntityService.DbContext = this.DbContext;
-                // If script_history table nout found, we need to create it
-                if (!this.SqlScriptService.CheckIfTableExist("script_history"))
-                {
-                    // Get script for save all sql files executed
-                    CustomFile sqlHistoryScript = WebFileHelper.GetSqlFile("001_ScriptHistory");
-                    // Execute it
-                    this.SqlScriptService.ExecuteSqlScript(sqlHistoryScript.FileName, sqlHistoryScript.Content, false);
-                }
-                // Execute alls sql scripts
-                this.ExecuteSqlScripts(this.SqlScriptService);
-                // Flush eventual data
-                this.SqlScriptService.EntityService.FlushData();
+                this.ManageSqlScripts();
             }
-        // This method gets called by the runtime. Use this method to add services to the container.
+        }
+
+        /// <summary>
+        /// Manage sql scripts
+        /// </summary>
+        private void ManageSqlScripts()
+        {
+            SqlConnectionBuilder connectionBuilder = this.SetupSqlServerConnection();
+            this.SqlScriptService = new SqlScriptService(connectionBuilder);
+            // Init startup db context
+            this.DbContext = DefaultDbContext.GetDbContext<T>(connectionBuilder);
+            this.SqlScriptService.EntityService = new EntityService();
+            this.SqlScriptService.EntityService.DbContext = this.DbContext;
+            // If script_history table nout found, we need to create it
+            if (!this.SqlScriptService.CheckIfTableExist("script_history"))
+            {
+                // Get script for save all sql files executed
+                CustomFile sqlHistoryScript = WebFileHelper.GetSqlFile("001_ScriptHistory");
+                // Execute it
+                this.SqlScriptService.ExecuteSqlScript(sqlHistoryScript.FileName, sqlHistoryScript.Content, false);
+            }
+            // Execute alls sql scripts
+            this.ExecuteSqlScripts(this.SqlScriptService);
+            // Flush eventual data
+            this.SqlScriptService.EntityService.FlushData();
+        }
+
+        /// <summary>
+        /// Add session and controller services here
+        /// </summary>
+        /// <param name="services">Services</param>
+        protected abstract void AddSessionAndControllersServices(IServiceCollection services);
+
+        /// <summary>
+        /// Configure services added to the app
+        /// This method gets called by the runtime
+        /// </summary>
+        /// <param name="services">Services</param>
+        public void ConfigureServices(IServiceCollection services)
+        {
+            this.AddSessionAndControllersServices(services);
+            services.AddMemoryCache();
+            services.AddMvc();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddReact();
+            // Make sure a JS engine is registered, or you will get an error!
+            services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
+              .AddV8();
+            services.AddSignalR();
+        }
+
+        /// <summary>
+        /// Configure the HTTP request pipeline.
+        /// This method gets called by the runtime
+        /// <summary> 
+        /// </summary>
+        /// <param name="app">The app</param>
+        /// <param name="env">Environnement</param>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseSession();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                // Manage notify hub
+                if (Utils.IsNotEmpty(this.NotifyHubName))
+                {
+                    endpoints.MapHub<NotifyHub.NotifyHub>(this.NotifyHubName);
+                }
+            });
+
+            // Initialise ReactJS.NET. Must be before static files.
+            app.UseReact(config =>
+            {
+
+            });
         }
 
         /// <summary>

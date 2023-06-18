@@ -1,4 +1,5 @@
-﻿using MarquitoUtils.Web.React.Class.Tools;
+﻿using MarquitoUtils.Web.React.Class.NotifyHub;
+using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MarquitoUtils.Web.React.Class.Communication
@@ -12,7 +13,7 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// A web ajax, a class herited of this class can be called by an ajax request and return a string
         /// </summary>
         /// <param name="webDataEngine">A web tool for recover data stored inside session</param>
-        public WebAjax(WebDataEngine webDataEngine) : base(webDataEngine)
+        public WebAjax(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
         {
             
         }
