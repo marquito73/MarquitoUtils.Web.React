@@ -62,6 +62,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
                 // Flush eventual data
                 this.SqlScriptService.EntityService.FlushData();
             }
+        // This method gets called by the runtime. Use this method to add services to the container.
         }
 
         /// <summary>
