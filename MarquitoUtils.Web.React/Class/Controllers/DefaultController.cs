@@ -90,7 +90,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         [Route("~/")]
         public virtual IActionResult Index()
         {
-            return View();
+            return this.GetView("Home/Index");
         }
 
         /// <summary>
@@ -103,6 +103,24 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         public virtual IActionResult ExecAjax()
         {
             return this.ExecAjax(Assembly.GetExecutingAssembly());
+        }
+
+        /// <summary>
+        /// Get web data engine
+        /// </summary>
+        /// <param name="parameters">Parameters from POST or GET query</param>
+        /// <returns></returns>
+        private WebDataEngine GetWebDataEngine(List<Parameter> parameters)
+        {
+            WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
+
+            webDataEngine.ControllerContext = this.ControllerContext;
+            webDataEngine.ControllerViewData = this.ViewData;
+            webDataEngine.ControllerTempData = this.TempData;
+
+            webDataEngine.AjaxParameters = parameters;
+
+            return webDataEngine;
         }
 
         /// <summary>
@@ -119,8 +137,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             // Parameters in query
             List<Parameter> parameters = AjaxHelper.GetValuesFromUrl(this.Request.QueryString.Value);
             // Init web data engine
-            WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
-            webDataEngine.AjaxParameters = parameters;
+            WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
             // Get files if we have it
             if (this.Request.HasFormContentType && Utils.IsNotNull(this.Request.Form))
             {
@@ -183,10 +200,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             List<Parameter> parameters = ActionHelper.GetValuesFromUrl(this.Request.QueryString.Value);
 
             // Init web data engine
-            WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
-            webDataEngine.AjaxParameters = parameters;
+            WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
             // If action_name or action not found, try found actionName and action inside parameters
-            if (Utils.IsEmpty(action_name) || Utils.IsEmpty(action_action))
+            if ((Utils.IsEmpty(action_name) || Utils.IsEmpty(action_action)) && Utils.IsNotEmpty(parameters))
             {
                 action_name = Utils.GetAsString(parameters.Where(param => param.ParameterName.Equals("actionName"))
                     .First().ParameterValue);
@@ -258,8 +274,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             if (Utils.IsNotNull(view))
             {
                 // Init web data engine
-                WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
-                webDataEngine.AjaxParameters = parameters;
+                WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
                 // Call action before the view
                 this.ExecAction("", "", assembly);
                 // Create view instance

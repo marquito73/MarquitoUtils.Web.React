@@ -2,6 +2,8 @@
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Globalization;
@@ -42,6 +44,12 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// Current language
         /// </summary>
         public CultureInfo CurrentLanguage {  get; private set; } = CultureInfo.CurrentCulture;
+        /// <summary>
+        /// Controller context
+        /// </summary>
+        public ControllerContext ControllerContext { get; set; }
+        public ViewDataDictionary ControllerViewData { get; set; }
+        public ITempDataDictionary ControllerTempData { get; set; }
 
         /// <summary>
         /// Web engine, for manage data in session

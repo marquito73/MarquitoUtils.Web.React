@@ -155,7 +155,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
         {
             WebFileImport webFileImport = new WebFileImport();
 
-            webFileImport.ImportJs.Add("~/lib/microsoft/signalr/dist/browser/signalr.js");
+            //webFileImport.ImportJs.Add("~/lib/microsoft/signalr/dist/browser/signalr.js");
 
             return webFileImport;
         }
