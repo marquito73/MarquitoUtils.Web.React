@@ -94,18 +94,6 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         }
 
         /// <summary>
-        /// Exec ajax call, and return result
-        /// </summary>
-        /// <returns>Result of ajax call</returns>
-        [Route("ajax")]
-        [RequestSizeLimit(1_000_000_000)]
-        [AllowCrossSiteJson]
-        public virtual IActionResult ExecAjax()
-        {
-            return this.ExecAjax(Assembly.GetExecutingAssembly());
-        }
-
-        /// <summary>
         /// Get web data engine
         /// </summary>
         /// <param name="parameters">Parameters from POST or GET query</param>
@@ -121,6 +109,18 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             webDataEngine.AjaxParameters = parameters;
 
             return webDataEngine;
+        }
+
+        /// <summary>
+        /// Exec ajax call, and return result
+        /// </summary>
+        /// <returns>Result of ajax call</returns>
+        [Route("ajax")]
+        [RequestSizeLimit(1_000_000_000)]
+        [AllowCrossSiteJson]
+        public virtual IActionResult ExecAjax()
+        {
+            return this.ExecAjax(Assembly.GetExecutingAssembly());
         }
 
         /// <summary>
