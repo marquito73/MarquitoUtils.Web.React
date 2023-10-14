@@ -1,13 +1,8 @@
 ﻿using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Tools;
+using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Html;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Grid
 {
@@ -73,34 +68,12 @@ namespace MarquitoUtils.Web.React.Class.Components.Grid
             this.ReactComponentName = "Grid";
             this.RootUrl = rootUrl;
 
-            this.RootUrl = this.GetCorrectFecthRootUrl(rootUrl);
+            this.RootUrl = WebUtils.GetCorrectFecthRootUrl(rootUrl);
 
             this.Rows.Clear();
 
             this.InitGrid();
             this.InitColumns();
-        }
-
-        /// <summary>
-        /// Get the correct fetch root url
-        /// </summary>
-        /// <param name="rootUrl">The root url</param>
-        /// <returns>The correct fetch root url</returns>
-        private string GetCorrectFecthRootUrl(string rootUrl)
-        {
-            if (rootUrl.Contains("localhost:"))
-            {
-                if (rootUrl.Contains("/"))
-                {
-                    rootUrl = rootUrl.Substring(rootUrl.IndexOf("/"));
-                }
-                else
-                {
-                    rootUrl = "";
-                }
-            }
-
-            return rootUrl;
         }
 
         public override HtmlString GetAsReactJson()
