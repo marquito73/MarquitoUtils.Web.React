@@ -67,7 +67,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// <param name="translationFilePath">The path to access translations</param>
         private void ManageTranslations(Assembly translationFilePath)
         {
-            ITranslateService translateService = new TranslateService(new List<Translation>());
+            ITranslateService translateService = new TranslateService();
 
             List<Translation> translations = translateService.GetTranslations(
                     @Properties.Resources.translateFilePath, translationFilePath);
