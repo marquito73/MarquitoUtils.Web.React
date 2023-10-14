@@ -1,22 +1,15 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
-using MarquitoUtils.Main.Class.Tools.Logger;
 using MarquitoUtils.Web.React.Class.Attributes;
 using MarquitoUtils.Web.React.Class.Communication;
-using MarquitoUtils.Web.React.Class.Components.General;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Views;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace MarquitoUtils.Web.React.Class.Controllers
 {
@@ -82,6 +75,22 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         protected abstract void InitDbContext();
 
         /// <summary>
+        /// Change the language for the current user
+        /// </summary>
+        /// <param name="newLanguage">The new language to display</param>
+        /// <returns></returns>
+        [Route("language")]
+        [AllowCrossSiteJson]
+        public JsonResult ChangeLanguage(string newLanguage)
+        {
+            WebDataEngine dataEngine = this.GetWebDataEngine();
+
+            dataEngine.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetLanguage(newLanguage));
+
+            return this.GetJsonResult(new { Reload = true });
+        }
+
+        /// <summary>
         /// Return index
         /// </summary>
         /// <returns>The index view</returns>
@@ -98,7 +107,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// </summary>
         /// <param name="parameters">Parameters from POST or GET query</param>
         /// <returns></returns>
-        private WebDataEngine GetWebDataEngine(List<Parameter> parameters)
+        private WebDataEngine GetWebDataEngine(List<Parameter> parameters = null)
         {
             WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
 
@@ -106,7 +115,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             webDataEngine.ControllerViewData = this.ViewData;
             webDataEngine.ControllerTempData = this.TempData;
 
-            webDataEngine.AjaxParameters = parameters;
+            webDataEngine.AjaxParameters = Utils.Nvl(parameters);
 
             return webDataEngine;
         }
