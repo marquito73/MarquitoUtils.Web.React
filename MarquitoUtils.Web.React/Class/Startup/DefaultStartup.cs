@@ -1,17 +1,13 @@
 ﻿using MarquitoUtils.Main.Class.Entities.File;
 using MarquitoUtils.Main.Class.Entities.Sql;
 using MarquitoUtils.Main.Class.Tools.Encryption;
-using MarquitoUtils.Web.React.Class.Enums;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
-//using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 using MarquitoUtils.Main.Class.Service.Sql;
-using MarquitoUtils.Main.Class.Service.Files;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Sql;
-using MarquitoUtils.Web.React.Class.Communication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
@@ -20,6 +16,9 @@ using React.AspNet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using MarquitoUtils.Main.Class.Entities.Translation;
+using MarquitoUtils.Main.Class.Service.General;
+using MarquitoUtils.Main.Class.Translations;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -58,6 +57,22 @@ namespace MarquitoUtils.Web.React.Class.Startup
             {
                 this.ManageSqlScripts();
             }
+
+            this.ManageTranslations(Assembly.GetEntryAssembly());
+        }
+
+        /// <summary>
+        /// Init translations from an XML translation file
+        /// </summary>
+        /// <param name="translationFilePath">The path to access translations</param>
+        private void ManageTranslations(Assembly translationFilePath)
+        {
+            ITranslateService translateService = new TranslateService(new List<Translation>());
+
+            List<Translation> translations = translateService.GetTranslations(
+                    @Properties.Resources.translateFilePath, translationFilePath);
+
+            Translate.SetTranslationService(translations);
         }
 
         /// <summary>
@@ -83,6 +98,8 @@ namespace MarquitoUtils.Web.React.Class.Startup
             this.ExecuteSqlScripts(this.SqlScriptService);
             // Flush eventual data
             this.SqlScriptService.EntityService.FlushData();
+
+            this.DbContext.Dispose();
         }
 
         /// <summary>
@@ -102,6 +119,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
             services.AddMemoryCache();
             services.AddMvc();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddReact();
             // Make sure a JS engine is registered, or you will get an error!
             services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
