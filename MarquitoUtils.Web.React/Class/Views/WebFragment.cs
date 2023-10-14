@@ -1,17 +1,10 @@
-﻿using MarquitoUtils.Web.React.Class.Communication;
+﻿using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Html;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Views
 {
@@ -20,6 +13,11 @@ namespace MarquitoUtils.Web.React.Class.Views
     /// </summary>
     public abstract class WebFragment : WebView
     {
+        /// <summary>
+        /// Class for render fragment of cshtml inside another view
+        /// </summary>
+        /// <param name="webDataEngine">Web engine, contain data about session</param>
+        /// <param name="notifyHubProxy">Notify hub proxy</param>
         protected WebFragment(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
         {
         }
@@ -34,16 +32,8 @@ namespace MarquitoUtils.Web.React.Class.Views
 
             // Store view in context for get data inside the view
             this.WebDataEngine.WebContext.Items.Add(this.GetType().Name, this);
-            // The view name
-            string viewName = this.GetType().FullName.Substring(this.GetType().FullName.IndexOf(".Views.") + 1)
-                .Replace(".", "/");
-            // The view path
-            string viewNamePath = $"{viewName}.cshtml";
-            // The view engine, for find views
-            IViewEngine viewEngine = this.WebDataEngine.WebContext.RequestServices
-                .GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
             // The view find
-            ViewEngineResult viewResult = viewEngine.GetView(null, viewNamePath, false);
+            ViewEngineResult viewResult = this.GetViewResult();
 
             using (var sw = new StringWriter())
             {
@@ -55,6 +45,23 @@ namespace MarquitoUtils.Web.React.Class.Views
             }
 
             return viewHtmlResult;
+        }
+
+        /// <summary>
+        /// Return the view result
+        /// </summary>
+        /// <returns>The view result</returns>
+        private ViewEngineResult GetViewResult()
+        {
+            // The view name
+            string viewName = FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.");
+            // The view path
+            string viewNamePath = $"{viewName}.cshtml";
+            // The view engine, for find views
+            IViewEngine viewEngine = this.WebDataEngine.WebContext.RequestServices
+                .GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
+            // The view find
+            return viewEngine.GetView(null, viewNamePath, false);
         }
     }
 }
