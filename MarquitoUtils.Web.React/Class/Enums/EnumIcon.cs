@@ -19,7 +19,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         }
     }
 
-    public static class EnumIcons
+    public static class EnumIconExtension
     {
         public static EnumIconAttr Attr(this EnumIcon colorType)
         {
@@ -121,6 +121,10 @@ namespace MarquitoUtils.Web.React.Class.Enums
         [EnumMember]
         [EnumIconAttr("icon-mail3")] Mail3,
         [EnumMember]
-        [EnumIconAttr("icon-mail4")] Mail4
+        [EnumIconAttr("icon-mail4")] Mail4,
+        [EnumMember]
+        [EnumIconAttr("icon-linkedin")] Linkedin,
+        [EnumMember]
+        [EnumIconAttr("icon-github")] Github,
     }
 }
