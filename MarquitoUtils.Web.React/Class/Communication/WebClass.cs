@@ -1,5 +1,4 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Translation;
-using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
@@ -7,14 +6,8 @@ using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using static MarquitoUtils.Main.Class.Enums.EnumLang;
 
 namespace MarquitoUtils.Web.React.Class.Communication
@@ -118,9 +111,8 @@ namespace MarquitoUtils.Web.React.Class.Communication
                     @Properties.Resources.translateFilePath, translationFilePath);
 
                 this.WebDataEngine.SetSessionValue("MainTranslations", translations);
-
-                this.TranslateService = new TranslateService(translations);
             }
+            this.TranslateService = new TranslateService(translations);
         }
 
         /// <summary>
