@@ -58,16 +58,10 @@ namespace MarquitoUtils.Web.React.Class.Components.General
 
             foreach (string importCss in this.ImportCss)
             {
-                /*sbCssImport.Append("<link rel=\"preload\" href=\"")
-                    .Append(importCss)
-                    .Append("\" as=\"style\">\n");*/
                 sbCssImport.Append("<link rel=\"stylesheet\" href=\"")
                     .Append(importCss)
-                    .Append("\" media=\"print\" onload=\"this.media='all'\">").Append(this.RC);
+                    .Append(".css\" media=\"print\" onload=\"this.media='all'\">").Append(this.RC);
             }
-
-            //< link rel = "preload" href = "/css/div.css" as= "style" >
-            //< link rel = "stylesheet" href = "/css/div.css" media = "print" onload = "this.media='all'" >
 
             return new HtmlString(sbCssImport.ToString());
         }

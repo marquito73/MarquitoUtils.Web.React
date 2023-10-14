@@ -72,15 +72,26 @@ namespace MarquitoUtils.Web.React.Class.Tools
             return webResult;
         }
 
-        /*public WebString GetUrlOtherParametersParsed()
+        /// <summary>
+        /// Get the correct fetch root url
+        /// </summary>
+        /// <param name="rootUrl">The root url</param>
+        /// <returns>The correct fetch root url</returns>
+        public static string GetCorrectFecthRootUrl(string rootUrl)
         {
-            string result = this.GetUrlOtherParameters();
+            if (rootUrl.Contains("localhost:"))
+            {
+                if (rootUrl.Contains("/"))
+                {
+                    rootUrl = rootUrl.Substring(rootUrl.IndexOf("/"));
+                }
+                else
+                {
+                    rootUrl = "";
+                }
+            }
 
-            WebString webResult = new WebString("JSON.parse('" + result + "')");
-            webResult.NeedQuotes = false;
-
-            //return "$.parseJSON('" + result + "')";
-            return webResult;
-        }*/
+            return rootUrl;
+        }
     }
 }
