@@ -16,6 +16,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
     public class WebDataEngine
     {
         private readonly string WebSessionMapName = "MAIN_SESSION_MAP";
+        public static readonly string LanguageSessionKey = "CURRENT_LANGUAGE";
         /// <summary>
         /// Web context
         /// </summary>
@@ -100,9 +101,14 @@ namespace MarquitoUtils.Web.React.Class.Tools
             : this(webContext.Session, dbContext, webContext.Request.Host.Value)
         {
             this.WebContext = webContext;
-            string cultureInfoCode = webContext.Request.Headers["Accept-Language"].ToString().Split(";")
-                .FirstOrDefault()?.Split(",").FirstOrDefault();
-            this.CurrentLanguage = CultureInfo.GetCultureInfo(cultureInfoCode);
+
+            string language = this.GetSessionValue<string>(LanguageSessionKey);
+            if (Utils.IsEmpty(language))
+            {
+                this.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetCultureLanguage(this.WebContext));
+                language = this.GetSessionValue<string>(LanguageSessionKey);
+            }
+            this.CurrentLanguage = LanguageUtils.GetLanguage(language);
         }
 
         /// <summary>
