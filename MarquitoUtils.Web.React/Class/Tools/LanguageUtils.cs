@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MarquitoUtils.Main.Class.Enums.EnumLang;
 
 namespace MarquitoUtils.Web.React.Class.Tools
 {
@@ -29,7 +30,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// </summary>
         /// <param name="language">A language as string</param>
         /// <returns>The culture about a language as string</returns>
-        public static CultureInfo GetLanguage(string language)
+        public static CultureInfo GetCultureLanguage(string language)
         {
             return CultureInfo.GetCultureInfo(language);
         }
@@ -42,6 +43,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         public static CultureInfo GetCultureLanguage(HttpContext webContext)
         {
             return CultureInfo.GetCultureInfo(GetLanguage(webContext));
+        }
+
+        public static enumLang GetLanguage(CultureInfo culture)
+        {
+            string languageISOcode = culture.TwoLetterISOLanguageName;
+
+            return Enum.GetValues(typeof(enumLang))
+                .Cast<enumLang>()
+                .Where(lang => lang.ToString().ToUpper().Equals(languageISOcode.ToUpper()))
+                .FirstOrDefault(enumLang.EN);
         }
     }
 }

@@ -108,7 +108,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
                 this.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetCultureLanguage(this.WebContext));
                 language = this.GetSessionValue<string>(LanguageSessionKey);
             }
-            this.CurrentLanguage = LanguageUtils.GetLanguage(language);
+            this.CurrentLanguage = LanguageUtils.GetCultureLanguage(language);
         }
 
         /// <summary>

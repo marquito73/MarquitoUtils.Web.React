@@ -85,7 +85,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         {
             WebDataEngine dataEngine = this.GetWebDataEngine();
 
-            dataEngine.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetLanguage(newLanguage));
+            dataEngine.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetCultureLanguage(newLanguage));
 
             return this.GetJsonResult(new { Reload = true });
         }
