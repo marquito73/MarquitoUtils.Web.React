@@ -57,6 +57,12 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         protected DefaultController(ILogger<DefaultController> logger)
         {
             this._logger = logger;
+
+            string entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+
+            this.AjaxDefaultLocation = $"{entryAssemblyName}.Ajax";
+            this.ActionDefaultLocation = $"{entryAssemblyName}.Action";
+            this.ViewDefaultLocation = $"{entryAssemblyName}.Views";
         }
 
         /// <summary>

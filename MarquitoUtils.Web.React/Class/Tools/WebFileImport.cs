@@ -11,9 +11,9 @@ namespace MarquitoUtils.Web.React.Class.Components.General
     {
         private readonly string RC = "\n";
         private readonly string TAB = "\n";
-        public List<string> ImportJs { get; set; } = new List<string>();
-        public List<string> JsFunctions { get; set; } = new List<string>();
-        public List<string> ImportCss { get; set; } = new List<string>();
+        public ISet<string> ImportJs { get; set; } = new HashSet<string>();
+        public ISet<string> JsFunctions { get; set; } = new HashSet<string>();
+        public ISet<string> ImportCss { get; set; } = new HashSet<string>();
 
         public WebFileImport()
         {
@@ -75,9 +75,9 @@ namespace MarquitoUtils.Web.React.Class.Components.General
 
         public void Merge(WebFileImport otherWebFileImport)
         {
-            this.ImportCss.AddRange(otherWebFileImport.ImportCss);
-            this.ImportJs.AddRange(otherWebFileImport.ImportJs);
-            this.JsFunctions.AddRange(otherWebFileImport.JsFunctions);
+            otherWebFileImport.ImportCss.ToList().ForEach(css => this.ImportCss.Add(css));
+            otherWebFileImport.ImportJs.ToList().ForEach(js => this.ImportJs.Add(js));
+            otherWebFileImport.JsFunctions.ToList().ForEach(js => this.JsFunctions.Add(js));
         }
     }
 }
