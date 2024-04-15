@@ -70,8 +70,8 @@ namespace MarquitoUtils.Web.React.Class.Views
                 WebFileImport newWebFileImport = WebFileHelper.GetMainWebFileImport(this.LoadingIcon, this.ContainerIdForLoading);
                 this.WebFileImport.Merge(newWebFileImport);
             }
-            // Add css for this view
-            this.WebFileImport.ImportCss.Add($"/css{FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.", 6)}");
+            // Add js for this view (css is included inside js)
+            this.WebFileImport.ImportJs.Add($"/dist{FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.", 6)}");
         }
 
         /// <summary>

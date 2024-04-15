@@ -26,9 +26,7 @@ namespace MarquitoUtils.Web.React.Class.Components.General
 
             foreach (string importJs in this.ImportJs)
             {
-                sbJsImport.Append("<script type=\"text/javascript\" src=\"")
-                    .Append(importJs)
-                    .Append("\" charset=\"utf-8\" defer/></script>").Append(this.RC);
+                sbJsImport.Append($"<script type=\"module\" src=\"{importJs}.js\" defer></script>");
             }
 
             return new HtmlString(sbJsImport.ToString());

@@ -294,7 +294,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 this.ExecAction("", "", assembly);
                 // Create view instance
                 webView = (WebView)Activator.CreateInstance(view, webDataEngine, this.NotifyHubProxy);
-                webView.WebFileImport.ImportJs.Add(this.MainReactFile);
+                //webView.WebFileImport.ImportJs.Add(this.MainReactFile);
                 // Store view in context for get data inside the view
                 this.HttpContext.Items.Add("WebView", webView);
                 // Load the html file with view
