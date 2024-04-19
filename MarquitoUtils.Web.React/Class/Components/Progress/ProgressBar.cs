@@ -17,8 +17,9 @@ namespace MarquitoUtils.Web.React.Class.Components.Progress
         public string ChangeElementId { get; set; } = "";
         public WebFunction ChangeValueFunction { get; set; } = new WebFunction();
         public bool HideValue { get; set; } = false;
-        public ProgressBar(string id) : base(id)
+        public ProgressBar(string id, float percent) : base(id)
         {
+            this.Percent = percent;
         }
 
         public override HtmlString GetAsReactJson()
