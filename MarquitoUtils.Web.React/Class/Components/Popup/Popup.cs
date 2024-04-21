@@ -115,10 +115,5 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
 
             return popupActionButton;
         }
-
-        public override HtmlString GetAsReactJson()
-        {
-            return new HtmlString(this.GetInitReactComponent());
-        }
     }
 }

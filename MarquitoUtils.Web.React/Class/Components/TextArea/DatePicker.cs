@@ -14,10 +14,5 @@ namespace MarquitoUtils.Web.React.Class.Components.TextArea
         {
             this.Date = date;
         }
-
-        public override HtmlString GetAsReactJson()
-        {
-            return new HtmlString(this.GetInitReactComponent());
-        }
     }
 }
