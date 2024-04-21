@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MarquitoUtils.Web.React.Class.Components.Button
+namespace MarquitoUtils.Web.React.Class.Components.Buttons
 {
     public class IconButton : AbstractButton
     {

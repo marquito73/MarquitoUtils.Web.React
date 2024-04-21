@@ -1,8 +1,10 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
+using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Attributes;
 using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Enums.Action;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Views;
@@ -44,7 +46,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <summary>
         /// Main react file
         /// </summary>
-        protected string MainReactFile { get; set; } = "/dist/main.js";
+        protected string MainReactFile { get; set; } = "/dist/Main";
         /// <summary>
         /// Db context
         /// </summary>
@@ -196,7 +198,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         [AllowCrossSiteJson]
         public virtual IActionResult ExecAction(string action_name, string action_action)
         {
-            return this.ExecAction(action_name, action_action, Assembly.GetExecutingAssembly());
+            return this.ExecAction(action_name, action_action, Assembly.GetEntryAssembly());
         }
 
         /// <summary>
@@ -216,31 +218,48 @@ namespace MarquitoUtils.Web.React.Class.Controllers
 
             // Init web data engine
             WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
-            // If action_name or action not found, try found actionName and action inside parameters
-            if ((Utils.IsEmpty(action_name) || Utils.IsEmpty(action_action)) && Utils.IsNotEmpty(parameters))
+
+            Type action = null;
+            if (Utils.IsNotEmpty(parameters))
             {
-                action_name = Utils.GetAsString(parameters.Where(param => param.ParameterName.Equals("actionName"))
-                    .First().ParameterValue);
-                action_action = Utils.GetAsString(parameters.Where(param => param.ParameterName.Equals("action"))
-                    .First().ParameterValue);
+                // If action_name or action not found, try found actionName and action inside parameters
+                if ((Utils.IsEmpty(action_name) || Utils.IsEmpty(action_action)))
+                {
+                    action_name = Utils.GetAsString(parameters.Where(param => param.ParameterName.Equals("actionName"))
+                        .First().ParameterValue);
+                    action_action = Utils.GetAsString(parameters.Where(param => param.ParameterName.Equals("action"))
+                        .First().ParameterValue);
+                }
+
+                IEnumerable<Parameter> actionFullNameParameter = parameters
+                    .Where(param => param.ParameterName == "actionFullName");
+
+                if (Utils.IsNotEmpty(actionFullNameParameter))
+                {
+                    action = assembly.GetType(Utils.GetAsString(actionFullNameParameter.First().ParameterValue));
+                }
             }
 
-            Type action = assembly.GetType(ActionHelper.GetActionLocation(
-                this.ActionDefaultLocation, action_name));
+            if (Utils.IsNull(action))
+            {
+                action = assembly.GetType(ActionHelper.GetActionLocation(
+                    this.ActionDefaultLocation, action_name));
+            }
+            // TODO Faire le path relatif a la vue
 
             if (Utils.IsNotNull(action))
             {
                 // Init action
                 WebAction webAction = (WebAction)Activator.CreateInstance(action, webDataEngine, this.NotifyHubProxy);
 
-                actionResult = webAction.Exec(action_action);
+                actionResult = webAction.Exec(EnumUtils.GetEnum<EnumAction>(action_action));
             }
             else
             {
                 actionResult = action_name + " not found !";
             }
 
-            return Content(actionResult);
+            return GetJsonResult(actionResult);
         }
 
         /// <summary>
@@ -294,7 +313,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 this.ExecAction("", "", assembly);
                 // Create view instance
                 webView = (WebView)Activator.CreateInstance(view, webDataEngine, this.NotifyHubProxy);
-                //webView.WebFileImport.ImportJs.Add(this.MainReactFile);
+                this.AddMainReactFileToView(webView);
                 // Store view in context for get data inside the view
                 this.HttpContext.Items.Add("WebView", webView);
                 // Load the html file with view
@@ -308,6 +327,11 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             }
 
             return viewResult;
+        }
+
+        private void AddMainReactFileToView(WebView webView)
+        {
+            webView.WebFileImport.JavascriptModules.Add(this.MainReactFile, new List<string>());
         }
 
         /// <summary>

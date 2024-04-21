@@ -1,4 +1,5 @@
-﻿using MarquitoUtils.Web.React.Class.NotifyHub;
+﻿using MarquitoUtils.Web.React.Class.Enums.Action;
+using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 
 namespace MarquitoUtils.Web.React.Class.Communication
@@ -22,6 +23,6 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// </summary>
         /// <param name="action">The action you want to make</param>
         /// <returns></returns>
-        public abstract string Exec(string action);
+        public abstract string Exec(EnumAction action);
     }
 }

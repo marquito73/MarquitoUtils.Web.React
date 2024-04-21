@@ -32,7 +32,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Select.Flag
         /// <param name="rootUrl">The root url of the server</param>
         public void AddChangeLanguageEvent(string rootUrl)
         {
-            WebFunction ajaxFunction = new WebFunction("window.ReactWidgetFactory.AjaxUtils().constructor.ChangeLanguage", 
+            WebFunction ajaxFunction = new WebFunction("window.ReactWidgetFactory.AjaxUtils().ChangeLanguage", 
                 "props", "state");
 
             ajaxFunction.ParametersValues.Add(WebUtils.GetCorrectFecthRootUrl(rootUrl));
