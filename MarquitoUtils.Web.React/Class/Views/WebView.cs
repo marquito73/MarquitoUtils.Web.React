@@ -1,7 +1,6 @@
 ﻿using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Components;
-using MarquitoUtils.Web.React.Class.Components.General;
 using MarquitoUtils.Web.React.Class.Enums;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
@@ -71,7 +70,8 @@ namespace MarquitoUtils.Web.React.Class.Views
                 this.WebFileImport.Merge(newWebFileImport);
             }
             // Add js for this view (css is included inside js)
-            this.WebFileImport.ImportJs.Add($"/dist{FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.", 6)}");
+            this.WebFileImport.JavascriptModules
+                .Add($"/dist{FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.", 6)}", new List<string>());
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 ﻿using MarquitoUtils.Web.React.Class.Entities;
-using MarquitoUtils.Web.React.Class.Components.Button;
+using MarquitoUtils.Web.React.Class.Components.Buttons;
 using Microsoft.AspNetCore.Html;
 
 namespace MarquitoUtils.Web.React.Class.Components.Menu
@@ -7,7 +7,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Menu
     /// <summary>
     /// React tab
     /// </summary>
-    public class Tab : Button.Button
+    public class Tab : Button
     {
         /// <summary>
         /// Javascript function executed on tab's click

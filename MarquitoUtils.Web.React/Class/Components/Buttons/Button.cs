@@ -1,7 +1,7 @@
 ﻿using MarquitoUtils.Web.React.Class.Components;
 using Microsoft.AspNetCore.Html;
 
-namespace MarquitoUtils.Web.React.Class.Components.Button
+namespace MarquitoUtils.Web.React.Class.Components.Buttons
 {
     public class Button : AbstractButton
     {

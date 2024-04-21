@@ -10,6 +10,7 @@ namespace MarquitoUtils.Web.React.Class.TextArea
         public string PlaceHolder { get; set; }
         public bool ReadOnly { get; set; } = false;
         public bool SpellCheck { get; set; } = false;
+        public string Type { get; set; } = "text";
         public TextBox(string id) : base(id)
         {
 

@@ -61,6 +61,10 @@ namespace MarquitoUtils.Web.React.Class.Enums
         [EnumMember]
         [EnumWebEventAttr("mouseup")] MouseUp,
         [EnumMember]
+        [EnumWebEventAttr("mouseover")] MouseOver,
+        [EnumMember]
+        [EnumWebEventAttr("mouseout")] MouseOut,
+        [EnumMember]
         [EnumWebEventAttr("touchstart")] TouchStart,
         [EnumMember]
         [EnumWebEventAttr("touchend")] TouchEnd,
@@ -80,8 +84,6 @@ namespace MarquitoUtils.Web.React.Class.Enums
         [EnumWebEventAttr("dblclick")] DblClick,
         [EnumMember]
         [EnumWebEventAttr("mouseover")] MouseHover,
-        [EnumMember]
-        [EnumWebEventAttr("mouseout")] MouseOut,
         [EnumMember]
         [EnumWebEventAttr("load")] Load,
         [EnumMember]

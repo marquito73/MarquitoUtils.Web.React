@@ -28,6 +28,7 @@ namespace MarquitoUtils.Web.React.Class.Url
             sbEncodedUrl.Append(this.ViewMainUrl)
                 .Append("?").Append("urlType").Append("=").Append("view")
                 .Append("&").Append("viewName").Append("=").Append(this.GetViewFullName().Trim())
+                .Append("&").Append("actionFullName").Append("=").Append(this.GetActionFullName().Trim())
                 .Append("&").Append("actionName").Append("=").Append(this.GetActionName().Trim())
                 .Append("&").Append("action").Append("=").Append(this.ActionAction.Trim());
 
@@ -43,6 +44,11 @@ namespace MarquitoUtils.Web.React.Class.Url
         public string GetViewName()
         {
             return this.View.Name;
+        }
+
+        public string GetActionFullName()
+        {
+            return this.Action.FullName;
         }
 
         public string GetActionName()

@@ -1,4 +1,5 @@
-﻿using MarquitoUtils.Web.React.Class.Entities;
+﻿using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Entities;
 using MarquitoUtils.Web.React.Class.Enums;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Url;
@@ -80,43 +81,58 @@ namespace MarquitoUtils.Web.React.Class.Components
 
         protected string GetInitReactComponent()
         {
-            StringBuilder sbJson = new StringBuilder();
-
             string componentProps = WebUtils.GetSerializedObject(this)
                 .Replace("{}", "new Map()")
                 .Replace("[]", "new Array()");
 
-            sbJson.Append("window").Append(".").Append("ReactWidgetFactory").Append(".")
-                .Append("create").Append(this.ReactComponentName).Append("(")
-                .Append(componentProps).Append(", \"").Append(this.Id).Append("_container\"")
-                .Append(");");
+            string json = $"window.ReactWidgetFactory.create{this.ReactComponentName}({componentProps}, \"{this.Id}_container\");";
 
-            return this.GetStringInsideReactScript(sbJson.ToString());
+            return this.GetStringInsideReactScript(json);
         }
 
         /// <summary>
         /// Add an Ajax event
         /// </summary>
-        /// <typeparam name="TUrl">The url for retrieve the Ajax / Action</typeparam>
+        /// <typeparam name="TUrl">The url for retrieve the Ajax</typeparam>
         /// <param name="webEvent">The event type</param>
         /// <param name="url">The url</param>
         /// <param name="jsFunction">The function to execute on the front when event is triggered</param>
-        public void AddAjaxEvent<TUrl>(EnumWebEvent webEvent, TUrl url, string jsFunction = "")
-            where TUrl : WebUrl
+        public void AddAjaxEvent<TUrl, TAjax>(EnumWebEvent webEvent, TUrl url, string jsFunction = "")
+            where TUrl : WebAjaxUrl<TAjax>
+            where TAjax : WebAjax
         {
-            StringBuilder sbAjaxEvent = new StringBuilder();
-
-            sbAjaxEvent.Append("window").Append(".").Append("ReactWidgetFactory").Append(".")
-                .Append("AjaxUtils").Append(".").Append("PostDataWithUrl").Append("(")
-                .Append(url.GetEncodedUrl()).Append(")");
+            string ajaxEvent = $"window.ReactWidgetFactory.AjaxUtils().PostDataWithUrl({url})";
 
             if (this.Events.ContainsKey(webEvent))
             {
-                this.Events[webEvent] = new WebFunction(sbAjaxEvent.ToString());
+                this.Events[webEvent] = new WebFunction(ajaxEvent);
             }
             else
             {
-                this.Events.Add(webEvent, new WebFunction(sbAjaxEvent.ToString()));
+                this.Events.Add(webEvent, new WebFunction(ajaxEvent));
+            }
+        }
+
+        /// <summary>
+        /// Add an Action event
+        /// </summary>
+        /// <typeparam name="TUrl">The url for retrieve the Action</typeparam>
+        /// <param name="webEvent">The event type</param>
+        /// <param name="url">The url</param>
+        /// <param name="jsFunction">The function to execute on the front when event is triggered</param>
+        public void AddActionEvent<TUrl, TAction>(EnumWebEvent webEvent, TUrl url, string jsFunction = "")
+            where TUrl : WebActionUrl<TAction>
+            where TAction : WebAction
+        {
+            string actionEvent = $"window.ReactWidgetFactory.AjaxUtils().PostDataWithUrl({url})";
+
+            if (this.Events.ContainsKey(webEvent))
+            {
+                this.Events[webEvent] = new WebFunction(actionEvent);
+            }
+            else
+            {
+                this.Events.Add(webEvent, new WebFunction(actionEvent));
             }
         }
     }
