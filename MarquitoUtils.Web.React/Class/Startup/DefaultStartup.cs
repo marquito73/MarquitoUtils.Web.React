@@ -19,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using MarquitoUtils.Main.Class.Entities.Translation;
 using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Translations;
+using MarquitoUtils.Main.Class.Service.Files;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -29,6 +30,10 @@ namespace MarquitoUtils.Web.React.Class.Startup
     public abstract class DefaultStartup<T> where T : DefaultDbContext
     {
         protected IConfiguration Configuration { get; }
+        /// <summary>
+        /// The file service
+        /// </summary>
+        private IFileService FileService { get; set; } = new FileService();
         /// <summary>
         /// The Sql script service
         /// </summary>
@@ -80,10 +85,13 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// </summary>
         private void ManageSqlScripts()
         {
-            SqlConnectionBuilder connectionBuilder = this.SetupSqlServerConnection();
-            this.SqlScriptService = new SqlScriptService(connectionBuilder);
+            DatabaseConfiguration databaseConfiguration =
+                this.FileService.GetDefaultDatabaseConfiguration();
             // Init startup db context
-            this.DbContext = DefaultDbContext.GetDbContext<T>(connectionBuilder);
+            this.DbContext = DefaultDbContext
+                .GetDbContext<T>(databaseConfiguration);
+
+            this.SqlScriptService = new SqlScriptService(databaseConfiguration);
             this.SqlScriptService.EntityService = new EntityService();
             this.SqlScriptService.EntityService.DbContext = this.DbContext;
             // If script_history table nout found, we need to create it
@@ -175,12 +183,6 @@ namespace MarquitoUtils.Web.React.Class.Startup
         }
 
         /// <summary>
-        /// Setup sql server connection
-        /// </summary>
-        /// <returns>Sql server connection builder</returns>
-        protected abstract SqlConnectionBuilder SetupSqlServerConnection();
-
-        /// <summary>
         /// Execute sql scripts
         /// </summary>
         /// <param name="sqlScriptService">Script service</param>
@@ -205,12 +207,12 @@ namespace MarquitoUtils.Web.React.Class.Startup
         protected void InitDatabaseCreditentials(string dbUser, string dbPassword, string dbSource, 
             string dbName)
         {
-            SqlConnectionBuilder sqlConnectionBuilder = new SqlConnectionBuilder(dbUser,
+            /*SqlConnectionBuilder sqlConnectionBuilder = new SqlConnectionBuilder(dbUser,
                 dbPassword, dbSource, dbName);
 
             string encryptedDb = Encrypter.EncryptString(sqlConnectionBuilder.GetConnectionString());
 
-            string decryptedDb = Encrypter.DecryptString(encryptedDb);
+            string decryptedDb = Encrypter.DecryptString(encryptedDb);*/
         }
 
         protected string LoadImportFiles()

@@ -1,5 +1,8 @@
-﻿using MarquitoUtils.Main.Class.Entities.Param;
+﻿using MarquitoUtils.Main.Class.Entities.File;
+using MarquitoUtils.Main.Class.Entities.Param;
+using MarquitoUtils.Main.Class.Entities.Sql;
 using MarquitoUtils.Main.Class.Enums;
+using MarquitoUtils.Main.Class.Service.Files;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Attributes;
@@ -19,13 +22,14 @@ namespace MarquitoUtils.Web.React.Class.Controllers
     /// Default controller
     /// </summary>
     [Route("home")]
-    public abstract class DefaultController : Controller
+    public abstract class DefaultController<T> : Controller
+        where T : DefaultDbContext
     {
         /// <summary>
         /// Notify hub proxy, for communication with clients
         /// </summary>
         protected NotifyHubProxy NotifyHubProxy { get; private set; }
-        protected ILogger<DefaultController> _logger;
+        protected ILogger<DefaultController<T>> _logger;
         /// <summary>
         /// Ajax default location
         /// </summary>
@@ -51,12 +55,13 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// Db context
         /// </summary>
         protected DefaultDbContext DbContext { get; set; }
+        private IFileService FileService { get; set; } = new FileService();
 
         /// <summary>
         /// Default controller
         /// </summary>
         /// <param name="logger">Logger</param>
-        protected DefaultController(ILogger<DefaultController> logger)
+        protected DefaultController(ILogger<DefaultController<T>> logger)
         {
             this._logger = logger;
 
@@ -72,7 +77,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// </summary>
         /// <param name="logger">Logger</param>
         /// <param name="notifyHub">Notify hub</param>
-        protected DefaultController(ILogger<DefaultController> logger, IHubContext<NotifyHub.NotifyHub> notifyHub) : this(logger)
+        protected DefaultController(ILogger<DefaultController<T>> logger, IHubContext<NotifyHub.NotifyHub> notifyHub) : this(logger)
         {
             this.NotifyHubProxy = new NotifyHubProxy(notifyHub);
         }
@@ -80,7 +85,16 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <summary>
         /// Init database context
         /// </summary>
-        protected abstract void InitDbContext();
+        private void InitDbContext()
+        {
+            if (Utils.IsNull(this.DbContext))
+            {
+                DatabaseConfiguration databaseConfiguration =
+                this.FileService.GetDefaultDatabaseConfiguration();
+
+                this.DbContext = DefaultDbContext.GetDbContext<T>(databaseConfiguration);
+            }
+        }
 
         /// <summary>
         /// Change the language for the current user
