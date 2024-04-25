@@ -94,13 +94,22 @@ namespace MarquitoUtils.Web.React.Class.Startup
             this.SqlScriptService = new SqlScriptService(databaseConfiguration);
             this.SqlScriptService.EntityService = new EntityService();
             this.SqlScriptService.EntityService.DbContext = this.DbContext;
-            // If script_history table nout found, we need to create it
+            // If script_history table not found, we need to create it
             if (!this.SqlScriptService.CheckIfTableExist("script_history"))
             {
                 // Get script for save all sql files executed
                 CustomFile sqlHistoryScript = WebFileHelper.GetSqlFile("001_ScriptHistory");
                 // Execute it
                 this.SqlScriptService.ExecuteSqlScript(sqlHistoryScript.FileName, sqlHistoryScript.Content, false);
+            }
+            // If translation and translation_field tables not found, we need to create it
+            if (!this.SqlScriptService.CheckIfTableExist("translation") 
+                && !this.SqlScriptService.CheckIfTableExist("translation_field"))
+            {
+                // Get script for save all sql files executed
+                CustomFile sqlTranslations = WebFileHelper.GetSqlFile("002_Translations");
+                // Execute it
+                this.SqlScriptService.ExecuteSqlScript(sqlTranslations.FileName, sqlTranslations.Content, false);
             }
             // Execute alls sql scripts
             this.ExecuteSqlScripts(this.SqlScriptService);

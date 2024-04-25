@@ -3,6 +3,7 @@ using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
+using MarquitoUtils.Main.Class.Translations;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +23,6 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// </summary>
         protected WebDataEngine WebDataEngine { get; private set; }
         /// <summary>
-        /// The translate service
-        /// </summary>
-        private ITranslateService TranslateService { get; set; }
-        /// <summary>
         /// Current language
         /// </summary>
         protected CultureInfo CurrentLanguage { get; private set; }
@@ -42,7 +39,6 @@ namespace MarquitoUtils.Web.React.Class.Communication
         {
             this.WebDataEngine = webDataEngine;
             this.CurrentLanguage = webDataEngine.CurrentLanguage;
-            this.InitTranslations(Assembly.GetEntryAssembly());
         }
 
         public WebClass(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : this(webDataEngine)
@@ -95,27 +91,6 @@ namespace MarquitoUtils.Web.React.Class.Communication
         }
 
         /// <summary>
-        /// Init translations from an XML translation file
-        /// </summary>
-        /// <param name="translationFilePath">The path to access translations</param>
-        private void InitTranslations(Assembly translationFilePath)
-        {
-            List<Translation> translations = this.WebDataEngine
-                .GetSessionValue<List<Translation>>("MainTranslations");
-
-            this.TranslateService = new TranslateService(translations);
-
-            if (Utils.IsEmpty(translations))
-            {
-                translations = this.TranslateService.GetTranslations(
-                    @Properties.Resources.translateFilePath, translationFilePath);
-
-                this.WebDataEngine.SetSessionValue("MainTranslations", translations);
-            }
-            this.TranslateService = new TranslateService(translations);
-        }
-
-        /// <summary>
         /// Get translation
         /// </summary>
         /// <typeparam name="T">The class need translation</typeparam>
@@ -123,8 +98,8 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// <returns>The translation</returns>
         protected string GetTranslation<T>(string translateKey) where T : class
         {
-            enumLang lang = this.TranslateService.GetLanguageWithCultureInfo(this.CurrentLanguage); 
-            return this.TranslateService.GetTranslation<T>(translateKey, lang);
+            enumLang lang = Translate.GetLanguageWithCultureInfo(this.CurrentLanguage); 
+            return Translate.GetTranslation<T>(translateKey, lang);
         }
 
         /// <summary>
