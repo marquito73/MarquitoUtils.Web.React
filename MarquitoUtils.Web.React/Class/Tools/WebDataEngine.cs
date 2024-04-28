@@ -38,6 +38,10 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// </summary>
         public List<Parameter> AjaxParameters { get; set; } = new List<Parameter>();
         /// <summary>
+        /// The parameters from the form
+        /// </summary>
+        public List<Parameter> FormParameters { get; set; } = new List<Parameter>();
+        /// <summary>
         /// Files list
         /// </summary>
         public List<IFormFile> Files { get; set; } = new List<IFormFile>();
@@ -111,6 +115,8 @@ namespace MarquitoUtils.Web.React.Class.Tools
             this.CurrentLanguage = LanguageUtils.GetCultureLanguage(language);
         }
 
+        #region Session methods
+
         /// <summary>
         /// Get session ID
         /// </summary>
@@ -130,7 +136,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
             if (Utils.IsNull(sessionMap))
             {
                 sessionMap = new Dictionary<string, object>();
-                
+
                 this.WebSession.SetString(this.WebSessionMapName, Utils.GetSerializedObject(sessionMap));
             }
         }
@@ -192,7 +198,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
 
             return result;
         }
-        
+
         /// <summary>
         /// Set session value
         /// </summary>
@@ -224,8 +230,9 @@ namespace MarquitoUtils.Web.React.Class.Tools
             this.UpdateSessionMainMap(sessionMap);
         }
 
+        #endregion
 
-        // Utilities method
+        #region Get data from query
 
         /// <summary>
         /// Get string from query
@@ -234,11 +241,159 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// <returns>String for the parameter name</returns>
         public string GetStringFromQuery(string parameterName)
         {
+            return this.GetStringFromQueryOrForm(this.AjaxParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get integer from query
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Integer for the parameter name</returns>
+        public int GetIntegerFromQuery(string parameterName)
+        {
+            return this.GetIntegerFromQueryOrForm(this.AjaxParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get double from query
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Double for the parameter name</returns>
+        public double GetDoubleFromQuery(string parameterName)
+        {
+            return this.GetDoubleFromQueryOrForm(this.AjaxParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get long from query
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Long for the parameter name</returns>
+        public long GetLongFromQuery(string parameterName)
+        {
+            return this.GetLongFromQueryOrForm(this.AjaxParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get boolean from query
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Boolean for the parameter name</returns>
+        public bool GetBooleanFromQuery(string parameterName)
+        {
+            return this.GetBooleanFromQueryOrForm(this.AjaxParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get generic list from query
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Generic list for the parameter name</returns>
+        public List<T> GetListFromQuery<T>(string parameterName)
+        {
+            return this.GetListFromQueryOrForm<T>(this.AjaxParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get generic dictionary from query
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Generic dictionary for the parameter name</returns>
+        public Dictionary<K,V> GetDictionaryFromQuery<K,V>(string parameterName)
+        {
+            return this.GetDictionaryFromQueryOrForm<K,V>(this.AjaxParameters, parameterName);
+        }
+
+        #endregion Get data from query
+
+        #region Get data from form
+
+        /// <summary>
+        /// Get string from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>String for the parameter name</returns>
+        public string GetStringFromForm(string parameterName)
+        {
+            return this.GetStringFromQueryOrForm(this.FormParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get integer from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Integer for the parameter name</returns>
+        public int GetIntegerFromForm(string parameterName)
+        {
+            return this.GetIntegerFromQueryOrForm(this.FormParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get double from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Double for the parameter name</returns>
+        public double GetDoubleFromForm(string parameterName)
+        {
+            return this.GetDoubleFromQueryOrForm(this.FormParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get long from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Long for the parameter name</returns>
+        public long GetLongFromForm(string parameterName)
+        {
+            return this.GetLongFromQueryOrForm(this.FormParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get boolean from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Boolean for the parameter name</returns>
+        public bool GetBooleanFromForm(string parameterName)
+        {
+            return this.GetBooleanFromQueryOrForm(this.FormParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get generic list from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Generic list for the parameter name</returns>
+        public List<T> GetListFromForm<T>(string parameterName)
+        {
+            return this.GetListFromQueryOrForm<T>(this.FormParameters, parameterName);
+        }
+
+        /// <summary>
+        /// Get generic dictionary from form
+        /// </summary>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>Generic dictionary for the parameter name</returns>
+        public Dictionary<K, V> GetDictionaryFromForm<K, V>(string parameterName)
+        {
+            return this.GetDictionaryFromQueryOrForm<K, V>(this.FormParameters, parameterName);
+        }
+
+        #endregion Get data from form
+
+        #region Common for get data between query and form
+
+        /// <summary>
+        /// Get string from query or form
+        /// </summary>
+        /// <param name="parameters">Parameter list</param>
+        /// <param name="parameterName">The parameter name</param>
+        /// <returns>String for the parameter name</returns>
+        private string GetStringFromQueryOrForm(List<Parameter> parameters, string parameterName)
+        {
             string result = "";
 
             // The parameter found
-            Parameter foundParameter = this.AjaxParameters
-                .Find(parameter => parameter.ParameterName.Equals(parameterName));
+            Parameter foundParameter = parameters.Find(parameter => parameter.ParameterName.Equals(parameterName));
 
             if (Utils.IsNotNull(foundParameter))
             {
@@ -249,15 +404,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
-        /// Get integer from query
+        /// Get integer from query or form
         /// </summary>
+        /// <param name="parameters">Parameter list</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>Integer for the parameter name</returns>
-        public int GetIntegerFromQuery(string parameterName)
+        private int GetIntegerFromQueryOrForm(List<Parameter> parameters, string parameterName)
         {
             int result = 0;
 
-            string stringvalue = this.GetStringFromQuery(parameterName);
+            string stringvalue = this.GetStringFromQueryOrForm(parameters, parameterName);
 
             if (Utils.IsNotNull(stringvalue))
             {
@@ -268,15 +424,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
-        /// Get double from query
+        /// Get double from query or form
         /// </summary>
+        /// <param name="parameters">Parameter list</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>Double for the parameter name</returns>
-        public double GetDoubleFromQuery(string parameterName)
+        private double GetDoubleFromQueryOrForm(List<Parameter> parameters, string parameterName)
         {
             double result = 0;
 
-            string stringvalue = this.GetStringFromQuery(parameterName);
+            string stringvalue = this.GetStringFromQueryOrForm(parameters, parameterName);
 
             if (Utils.IsNotNull(stringvalue))
             {
@@ -287,15 +444,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
-        /// Get long from query
+        /// Get long from query or form
         /// </summary>
+        /// <param name="parameters">Parameter list</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>Long for the parameter name</returns>
-        public long GetLongFromQuery(string parameterName)
+        private long GetLongFromQueryOrForm(List<Parameter> parameters, string parameterName)
         {
             long result = 0;
 
-            string stringvalue = this.GetStringFromQuery(parameterName);
+            string stringvalue = this.GetStringFromQueryOrForm(parameters, parameterName);
 
             if (Utils.IsNotNull(stringvalue))
             {
@@ -306,15 +464,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
-        /// Get boolean from query
+        /// Get boolean from query or form
         /// </summary>
+        /// <param name="parameters">Parameter list</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>Boolean for the parameter name</returns>
-        public bool GetBooleanFromQuery(string parameterName)
+        private bool GetBooleanFromQueryOrForm(List<Parameter> parameters, string parameterName)
         {
             bool result = false;
 
-            string stringvalue = this.GetStringFromQuery(parameterName);
+            string stringvalue = this.GetStringFromQueryOrForm(parameters, parameterName);
 
             if (Utils.IsNotNull(stringvalue))
             {
@@ -325,15 +484,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
-        /// Get generic list from query
+        /// Get generic list from query or form
         /// </summary>
+        /// <param name="parameters">Parameter list</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>Generic list for the parameter name</returns>
-        public List<T> GetListFromQuery<T>(string parameterName)
+        private List<T> GetListFromQueryOrForm<T>(List<Parameter> parameters, string parameterName)
         {
             List<T> resultList = new List<T>();
 
-            string listString = this.GetStringFromQuery(parameterName);
+            string listString = this.GetStringFromQueryOrForm(parameters, parameterName);
 
             if (Utils.IsNotEmpty(listString))
             {
@@ -344,15 +504,16 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
-        /// Get generic dictionary from query
+        /// Get generic dictionary from query or form
         /// </summary>
+        /// <param name="parameters">Parameter list</param>
         /// <param name="parameterName">The parameter name</param>
         /// <returns>Generic dictionary for the parameter name</returns>
-        public Dictionary<K,V> GetDictionaryFromQuery<K,V>(string parameterName)
+        private Dictionary<K, V> GetDictionaryFromQueryOrForm<K, V>(List<Parameter> parameters, string parameterName)
         {
-            Dictionary<K,V> resultDictionary = new Dictionary<K,V>();
+            Dictionary<K, V> resultDictionary = new Dictionary<K, V>();
 
-            string dictionaryString = this.GetStringFromQuery(parameterName);
+            string dictionaryString = this.GetStringFromQueryOrForm(parameters, parameterName);
 
             if (Utils.IsNotEmpty(dictionaryString))
             {
@@ -361,5 +522,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
 
             return resultDictionary;
         }
+
+        #endregion
     }
 }

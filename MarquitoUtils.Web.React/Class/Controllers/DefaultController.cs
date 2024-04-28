@@ -139,6 +139,32 @@ namespace MarquitoUtils.Web.React.Class.Controllers
 
             webDataEngine.AjaxParameters = Utils.Nvl(parameters);
 
+
+            if (this.Request.HasFormContentType && Utils.IsNotNull(this.Request.Form))
+            {
+                // Get files if we have it
+                if (Utils.IsNotEmpty(this.Request.Form.Files))
+                {
+                    webDataEngine.Files = this.Request.Form.Files.ToList();
+                }
+                // Get form data if we have it
+                this.Request.Form.Where(formData =>
+                {
+                    return formData.Key == "form";
+                }).Select(formData =>
+                {
+                    return formData.Value;
+                }).ToList().ForEach(formData =>
+                {
+                    webDataEngine.FormParameters = Utils.GetDeserializedObject<Dictionary<string, object>>(formData)
+                        .Select(parameter =>
+                        {
+                            return new Parameter(parameter.Key, parameter.Value);
+                        }).ToList();
+                });
+
+            }
+
             return webDataEngine;
         }
 
@@ -169,11 +195,6 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             List<Parameter> parameters = AjaxHelper.GetValuesFromUrl(this.Request.QueryString.Value);
             // Init web data engine
             WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
-            // Get files if we have it
-            if (this.Request.HasFormContentType && Utils.IsNotNull(this.Request.Form))
-            {
-                webDataEngine.Files = this.Request.Form.Files.ToList();
-            }
             // Ajax name
             string ajax_name = webDataEngine.GetStringFromQuery("ajax_name");
             // Ajax action
@@ -224,7 +245,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <returns>The action result</returns>
         protected IActionResult ExecAction(string action_name, string action_action, Assembly assembly)
         {
-            string actionResult = "";
+            IActionResult actionResult = new ContentResult();
 
             this.InitDbContext();
 
@@ -270,10 +291,10 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             }
             else
             {
-                actionResult = action_name + " not found !";
+                actionResult = this.GetContentResult($"{action_name} not found !");
             }
 
-            return GetJsonResult(actionResult);
+            return actionResult;
         }
 
         /// <summary>

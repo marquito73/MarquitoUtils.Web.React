@@ -114,7 +114,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
             // Execute alls sql scripts
             this.ExecuteSqlScripts(this.SqlScriptService);
             // Flush eventual data
-            this.SqlScriptService.EntityService.FlushData();
+            this.SqlScriptService.EntityService.FlushData(out Exception exception);
 
             this.DbContext.Dispose();
         }
