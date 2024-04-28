@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Chart.Radar
 {
-    public class RadarChart<TData> : Component
+    public class RadarChart<TData> : Chart
         where TData : IRadarData
     {
         public IList<TData> Data { get; set; } = new List<TData>();
         public ISet<RadarType> RadarTypes { get; set; } = new HashSet<RadarType>();
+        public string RadarGridColor { get; set; } = "gray";
 
         public RadarChart(string id) : base(id)
         {
