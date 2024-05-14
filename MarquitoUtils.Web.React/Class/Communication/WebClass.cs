@@ -4,6 +4,7 @@ using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Translations;
+using MarquitoUtils.Web.React.Class.Communication.JSON;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
@@ -116,14 +117,38 @@ namespace MarquitoUtils.Web.React.Class.Communication
             return result;
         }
 
+        protected JsonResult GetSuccessJsonResult(string resultMessage = "", object content = null)
+        {
+            JsonResultContent result = new JsonResultContent()
+            {
+                State = Enums.JSON.EnumJsonResponseState.Success.ToString().ToLower(),
+                Message = resultMessage,
+                Data = content,
+            };
+
+            return this.GetJsonResult(result);
+        }
+
+        protected JsonResult GetErrorJsonResult(string resultMessage = "", object content = null)
+        {
+            JsonResultContent result = new JsonResultContent()
+            {
+                State = Enums.JSON.EnumJsonResponseState.Error.ToString().ToLower(),
+                Message = resultMessage,
+                Data = content,
+            };
+
+            return this.GetJsonResult(result);
+        }
+
         /// <summary>
         /// Get JSON content result
         /// </summary>
         /// <param name="content">The content</param>
         /// <returns>JSON content result</returns>
-        protected JsonResult GetJsonResult(object content)
+        private JsonResult GetJsonResult(JsonResultContent result)
         {
-            return new JsonResult(content);
+            return new JsonResult(result);
         }
 
         /// <summary>

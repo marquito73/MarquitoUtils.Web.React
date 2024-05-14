@@ -7,6 +7,7 @@ using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Attributes;
 using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Communication.JSON;
 using MarquitoUtils.Web.React.Class.Enums.Action;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
@@ -109,7 +110,12 @@ namespace MarquitoUtils.Web.React.Class.Controllers
 
             dataEngine.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetCultureLanguage(newLanguage));
 
-            return this.GetJsonResult(new { Reload = true });
+            //return this.GetJsonResult(new { Reload = true });
+
+            return this.GetSuccessJsonResult("", new
+            {
+                Reload = true,
+            });
         }
 
         /// <summary>
@@ -406,6 +412,40 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             result.FileDownloadName = fileName;
 
             return result;
+        }
+
+        protected JsonResult GetSuccessJsonResult(string resultMessage = "", object content = null)
+        {
+            JsonResultContent result = new JsonResultContent()
+            {
+                State = Enums.JSON.EnumJsonResponseState.Success.ToString().ToLower(),
+                Message = resultMessage,
+                Data = content,
+            };
+
+            return this.GetJsonResult(result);
+        }
+
+        protected JsonResult GetErrorJsonResult(string resultMessage = "", object content = null)
+        {
+            JsonResultContent result = new JsonResultContent()
+            {
+                State = Enums.JSON.EnumJsonResponseState.Error.ToString().ToLower(),
+                Message = resultMessage,
+                Data = content,
+            };
+
+            return this.GetJsonResult(result);
+        }
+
+        /// <summary>
+        /// Get JSON content result
+        /// </summary>
+        /// <param name="content">The content</param>
+        /// <returns>JSON content result</returns>
+        private JsonResult GetJsonResult(JsonResultContent result)
+        {
+            return new JsonResult(result);
         }
     }
 }
