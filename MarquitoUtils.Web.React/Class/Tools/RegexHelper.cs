@@ -61,19 +61,17 @@ namespace MarquitoUtils.Web.React.Class.Tools
                     .Append("^(")
                     // Une chaine de caractère acceptant uniquement les lettres (minuscules et majuscules), les chiffres, et les caractères
                     // "-", "_" et "." de maximum 123 caractères
-                    .Append("[a-zA-Z0-9").Append(@"\\-").Append("_").Append(@"\\.").Append("]")
-                    .Append(GetQuantifierForRegex(true, 123))
+                    .Append($@"[a-zA-Z0-9\-_\.]{GetQuantifierForRegex(true, 123)}")
                     // Une @
-                    .Append("@").Append(GetExactQuantifierForRegex(1))
+                    .Append($"@{GetExactQuantifierForRegex(1)}")
                     // Une chaine de caractère acceptant uniquement les lettres (minuscules et majuscules), les chiffres, et les caractères
                     // "-" et "." de maximum 123 caractères
-                    .Append("[a-zA-Z0-9").Append(@"\\-").Append(@"\\.").Append("]")
-                    .Append(GetQuantifierForRegex(true, 123))
+                    .Append($@"[a-zA-Z0-9\-\.]{GetQuantifierForRegex(true, 123)}")
                     // Un .
-                    .Append(@"\\.").Append(GetExactQuantifierForRegex(1))
+                    .Append($@"\.{GetExactQuantifierForRegex(1)}")
                     // Une chaine de caractère acceptant uniquement les lettres (minuscules et majuscules) entre 2 et 6 caractères
                     .Append("[a-zA-Z]")
-                    .Append(GetQuantifierForRegex(2, 6))
+                    .Append($"[a-zA-Z]{GetQuantifierForRegex(2, 6)}")
 
                     .Append(")$");
 
