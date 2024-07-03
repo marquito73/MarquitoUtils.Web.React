@@ -20,7 +20,7 @@ namespace MarquitoUtils.Web.React.Class.Components.TextArea
         /// <summary>
         /// Use bold text ?
         /// </summary>
-        public bool BoldText { get; set; } = false;
+        public bool BoldText { get; set; } = true;
         /// <summary>
         /// Text color
         /// </summary>

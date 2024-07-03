@@ -36,6 +36,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Menu
         {
             Tab newTab = new Tab(this.Id + this.NextTabNumber, caption, onClickFunction);
             newTab.Link = link;
+            newTab.BoldCaption = true;
             this.Tabs.Add(newTab);
 
             this.NextTabNumber++;
