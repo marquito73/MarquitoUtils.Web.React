@@ -47,6 +47,11 @@ namespace MarquitoUtils.Web.React.Class.Communication
             this.NotifyHubProxy = notifyHubProxy;
         }
 
+        protected enumLang GetCurrentLanguage()
+        {
+            return LanguageUtils.GetLanguage(this.WebDataEngine.CurrentLanguage);
+        }
+
         // TODO Determinate how to find implementations
         public T GetService<T>() where T : IEntityService
         {

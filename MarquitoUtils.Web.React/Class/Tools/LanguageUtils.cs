@@ -32,6 +32,15 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// <returns>The culture about a language as string</returns>
         public static CultureInfo GetCultureLanguage(string language)
         {
+            switch (language)
+            {
+                case "GB":
+                    language = "en-gb";
+                    break;
+                case "US":
+                    language = "us-gb";
+                    break;
+            }
             return CultureInfo.GetCultureInfo(language);
         }
 

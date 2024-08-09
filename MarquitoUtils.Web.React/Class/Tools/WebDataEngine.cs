@@ -127,6 +127,15 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
+        /// Get the user's IP address
+        /// </summary>
+        /// <returns>The user's IP address</returns>
+        public string GetUserIPAddress()
+        {
+            return this.WebContext.Connection.RemoteIpAddress?.ToString();
+        }
+
+        /// <summary>
         /// Init session map
         /// </summary>
         private void InitSessionMainMap()

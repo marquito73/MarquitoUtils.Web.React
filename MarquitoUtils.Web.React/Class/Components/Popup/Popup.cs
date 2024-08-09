@@ -65,11 +65,33 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
         /// The popup can be moved ?
         /// </summary>
         public bool CanBeMoved { get; set; } = false;
+        /// <summary>
+        /// The main color used for style this popup
+        /// </summary>
+        public string MainStyleColor = "deepskyblue";
+        /// <summary>
+        /// The ok button
+        /// </summary>
         public Button? OkButton { get; private set; }
+        /// <summary>
+        /// The ok button url
+        /// </summary>
         public string? OkButtonUrl { get; private set; }
+        /// <summary>
+        /// The cancel button
+        /// </summary>
         public Button? CancelButton { get; private set; }
+        /// <summary>
+        /// The cancel button url
+        /// </summary>
         public string? CancelButtonUrl { get; private set; }
+        /// <summary>
+        /// The validate button
+        /// </summary>
         public Button? ValidateButton { get; private set; }
+        /// <summary>
+        /// The validate button url
+        /// </summary>
         public string? ValidateButtonUrl { get; private set; }
 
         /// <summary>

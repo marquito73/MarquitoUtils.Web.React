@@ -10,6 +10,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Chart
     {
         public string LabelColor { get; set; } = "gray";
         public int LabelSize { get; set; } = 20;
+        public string ChartTitle { get; set; } = "";
 
         protected Chart(string id) : base(id)
         {

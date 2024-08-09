@@ -67,8 +67,7 @@ namespace MarquitoUtils.Web.React.Class.Components
         {
             StringBuilder sbScript = new StringBuilder();
 
-            //https://www.w3schools.com/tags/ev_onload.asp
-            sbScript.Append("<div id=\"").Append(this.Id).Append("_container\">").Append(this.RC)
+            sbScript.Append($"<div id=\"{this.Id}_container\" class=\"{this.ReactComponentName}-React-Container\">").Append(this.RC)
                 .Append("<script>").Append(this.RC)
                 .Append("window.addEventListener(\"DOMContentLoaded\", () => {").Append(this.RC)
                 .Append(script).Append(this.RC)
