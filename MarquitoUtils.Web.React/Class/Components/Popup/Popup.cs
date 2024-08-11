@@ -133,7 +133,10 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
 
         private Button GetPopupActionButton(string id, string caption)
         {
-            Button popupActionButton = new Button(id, caption);
+            Button popupActionButton = new Button(id, caption)
+            {
+                BorderColor = "rgba(255,255,255,0.9)"
+            };
 
             return popupActionButton;
         }
