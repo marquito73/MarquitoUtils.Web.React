@@ -10,6 +10,9 @@ namespace MarquitoUtils.Web.React.Class.Components.TextArea
         public DateTime MaximumDate { get; set; }
         public string PlaceHolder { get; set; } = "";
         public enumLang Language { get; set; } = enumLang.FR;
+        public bool HasBorder { get; set; } = true;
+        public string BackgroundColor { get; set; } = "";
+        public bool BrightnessWhenHoverFocus { get; set; } = true;
         public DatePicker(string id, DateTime date) : base(id)
         {
             this.Date = date;

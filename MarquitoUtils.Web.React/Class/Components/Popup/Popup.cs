@@ -68,7 +68,15 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
         /// <summary>
         /// The main color used for style this popup
         /// </summary>
-        public string MainStyleColor = "deepskyblue";
+        public string MainStyleColor { get; set; } = "deepskyblue";
+        /// <summary>
+        /// Main background color
+        /// </summary>
+        public string MainBackgroundColor {  get; set; }
+        /// <summary>
+        /// Iframe background color
+        /// </summary>
+        public string IframeBackgroundColor { get; set; }
         /// <summary>
         /// The ok button
         /// </summary>

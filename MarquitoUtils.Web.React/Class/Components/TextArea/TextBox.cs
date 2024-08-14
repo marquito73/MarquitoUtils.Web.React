@@ -11,6 +11,9 @@ namespace MarquitoUtils.Web.React.Class.TextArea
         public bool ReadOnly { get; set; } = false;
         public bool SpellCheck { get; set; } = false;
         public string Type { get; set; } = "text";
+        public bool HasBorder { get; set; } = true;
+        public string BackgroundColor { get; set; } = "";
+        public bool BrightnessWhenHoverFocus { get; set; } = true;
         public TextBox(string id) : base(id)
         {
 

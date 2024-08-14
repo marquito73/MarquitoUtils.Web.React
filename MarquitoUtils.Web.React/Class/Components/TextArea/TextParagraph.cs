@@ -11,6 +11,7 @@ namespace MarquitoUtils.Web.React.Class.Components.TextArea
         public string Text { get; set; }
         public string TextColor { get; set; } = "black";
         public int TextSize { get; set; } = 20;
+        public string BackgroundColor { get; set; } = "";
 
         public TextParagraph(string id, string text) : base(id)
         {

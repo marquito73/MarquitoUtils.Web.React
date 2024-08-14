@@ -15,6 +15,9 @@ namespace MarquitoUtils.Web.React.Class.Components.TextArea
         public bool SpellCheck { get; set; } = false;
         public bool CanHorizontallyResize { get; set; } = false;
         public bool CanVerticalResize { get; set; } = false;
+        public bool HasBorder { get; set; } = true;
+        public string BackgroundColor { get; set; } = "";
+        public bool BrightnessWhenHoverFocus { get; set; } = true;
         public TextArea(string id, string value) : base(id)
         {
             this.Value = value;
