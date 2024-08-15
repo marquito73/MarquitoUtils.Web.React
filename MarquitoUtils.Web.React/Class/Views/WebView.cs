@@ -40,6 +40,8 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// </summary>
         protected bool LoadMainWebFileImport { get; set; } = false;
 
+        protected Dictionary<string, string> MetaDatas { get; private set; } = new Dictionary<string, string>();
+
         /// <summary>
         /// Common class for views
         /// </summary>
@@ -149,6 +151,42 @@ namespace MarquitoUtils.Web.React.Class.Views
             }
 
             return componentReactJson;
+        }
+
+        /// <summary>
+        /// Add meta data to your page
+        /// </summary>
+        /// <param name="metaName">Meta data name</param>
+        /// <param name="metaContent">Meta data value</param>
+        protected void AddMetaData(string metaName, string metaContent)
+        {
+            this.MetaDatas.Add(metaName, metaContent);
+        }
+
+        protected void AddKeyWordsMetaData(List<string> keyWords)
+        {
+            this.MetaDatas.Add("keywords", string.Join(" ", keyWords));
+        }
+
+        /// <summary>
+        /// Get meta data tag as HTML
+        /// </summary>
+        /// <returns>Meta data tag as HTML</returns>
+        public HtmlString GetMetaDatas()
+        {
+            return new HtmlString(string.Join("\n", this.MetaDatas
+                .Select(metaData => this.GetMetaData(metaData.Key, metaData.Value))));
+        }
+
+        /// <summary>
+        /// Get meta data tag as string
+        /// </summary>
+        /// <param name="metaName">Meta data name</param>
+        /// <param name="metaContent">Meta data value</param>
+        /// <returns>Meta data tag as string</returns>
+        private string GetMetaData(string metaName, string metaContent)
+        {
+            return $"<meta name=\"{metaName}\" content=\"{metaContent}\" />";
         }
     }
 
