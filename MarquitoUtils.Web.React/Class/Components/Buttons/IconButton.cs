@@ -11,6 +11,8 @@ namespace MarquitoUtils.Web.React.Class.Components.Buttons
     {
         public string IconClass { get; set; } = "";
         public string IconColor { get; set; } = "";
+        public int IconSize { get; set; } = 15;
+
         public IconButton(string id, string iconClass) : base(id)
         {
             this.IconClass = iconClass;
