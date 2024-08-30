@@ -56,6 +56,7 @@ namespace MarquitoUtils.Web.React.Class.Views
                 newWebFileImport.Merge(this.WebFileImport);
                 this.WebFileImport = newWebFileImport;
             }
+            this.AfterInit();
         }
 
         /// <summary>
@@ -74,6 +75,7 @@ namespace MarquitoUtils.Web.React.Class.Views
             // Add js for this view (css is included inside js)
             this.WebFileImport.JavascriptModules
                 .Add($"/dist{FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.", 6)}", new List<string>());
+            this.AfterInit();
         }
 
         /// <summary>
