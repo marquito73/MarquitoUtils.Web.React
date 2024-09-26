@@ -180,6 +180,24 @@ namespace MarquitoUtils.Web.React.Class.Tools
         }
 
         /// <summary>
+        /// Set if the user is authenticated or not
+        /// </summary>
+        /// <param name="authenticated">The user is authenticated ?</param>
+        public void SetUserAuthenticated(bool authenticated)
+        {
+            this.SetSessionValue("IsAuthenticated", authenticated);
+        }
+
+        /// <summary>
+        /// The user is authenticated ?
+        /// </summary>
+        /// <returns>The user is authenticated ?</returns>
+        public bool IsUserAuthenticated()
+        {
+            return this.GetSessionValue<bool>("IsAuthenticated");
+        }
+
+        /// <summary>
         /// Get session value
         /// </summary>
         /// <typeparam name="T">Value type</typeparam>
@@ -201,8 +219,14 @@ namespace MarquitoUtils.Web.React.Class.Tools
 
             if (Utils.IsNotNull(value))
             {
-                //result = (T)value;
-                result = Utils.GetDeserializedObject<T>(Utils.GetAsString(value));
+                if (value.GetType() == typeof(T))
+                {
+                    result = (T)value;
+                }
+                else
+                {
+                    result = Utils.GetDeserializedObject<T>(Utils.GetAsString(value));
+                }
             }
 
             return result;

@@ -20,6 +20,7 @@ using MarquitoUtils.Main.Class.Entities.Translation;
 using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Translations;
 using MarquitoUtils.Main.Class.Service.Files;
+using Microsoft.AspNetCore.Routing;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -173,9 +174,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                this.ConfigureEndpointController(endpoints);
 
                 // Manage notify hub
                 if (Utils.IsNotEmpty(this.NotifyHubName))
@@ -189,6 +188,15 @@ namespace MarquitoUtils.Web.React.Class.Startup
             {
 
             });
+        }
+
+        protected virtual void ConfigureEndpointController(IEndpointRouteBuilder endpoints)
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            //endpoints.MapControllers();
         }
 
         /// <summary>

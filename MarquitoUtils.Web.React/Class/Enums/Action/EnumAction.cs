@@ -8,6 +8,7 @@
         ClosePopup,
         CancelPopup,
         ValidatePopup,
+        BeforeOpenPopup,
         SaveData,
     }
 }

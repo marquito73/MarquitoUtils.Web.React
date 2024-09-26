@@ -101,21 +101,37 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
         /// The validate button url
         /// </summary>
         public string? ValidateButtonUrl { get; private set; }
+        /// <summary>
+        /// The close URL
+        /// </summary>
+        public string? CloseUrl { get; private set; }
 
         /// <summary>
         /// Popup component
         /// </summary>
         /// <param name="id">His id</param>
         /// <param name="popupTitle">Popup title</param>
-        /// <param name="elementIdForOpenPopup">Element trigger the opening of the popup</param>
         /// <param name="action">Action to make before load</param>
-        public Popup(string id, string popupTitle, string elementIdForOpenPopup, EnumAction action) 
+        public Popup(string id, string popupTitle, EnumAction action) 
             : base(id)
         {
             this.ReactComponentName = "Popup";
             this.Title = popupTitle;
-            this.ElementIdForOpenPopup = elementIdForOpenPopup;
             this.ContentUrl.ActionAction = action.GetEnumName();
+            this.CloseUrl = new WebActionUrl<A>(EnumAction.ClosePopup).GetEncodedUrl();
+        }
+
+        /// <summary>
+        /// Popup component
+        /// </summary>
+        /// <param name="id">His id</param>
+        /// <param name="popupTitle">Popup title</param>
+        /// <param name="action">Action to make before load</param>
+        /// <param name="elementIdForOpenPopup">Element trigger the opening of the popup</param>
+        public Popup(string id, string popupTitle, EnumAction action, string elementIdForOpenPopup)
+            : this(id, popupTitle, action)
+        {
+            this.ElementIdForOpenPopup = elementIdForOpenPopup;
         }
 
         public void AddOkButton(string id, string caption)

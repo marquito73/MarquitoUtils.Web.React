@@ -170,5 +170,16 @@ namespace MarquitoUtils.Web.React.Class.Communication
 
             return result;
         }
+
+        /// <summary>
+        /// Get redirect result
+        /// </summary>
+        /// <param name="redirectUrl">The url</param>
+        /// <returns>Redirect result</returns>
+        protected RedirectResult GetRedirectResult(string redirectUrl)
+        {
+            //this.WebDataEngine.WebContext.Response.Headers.Add("Access-Control-Expose-Headers", "Location");
+            return new RedirectResult(redirectUrl);
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Components;
+using MarquitoUtils.Web.React.Class.Components.Spinner;
+using MarquitoUtils.Web.React.Class.Components.Toast;
 using MarquitoUtils.Web.React.Class.Enums;
 using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
@@ -41,6 +43,16 @@ namespace MarquitoUtils.Web.React.Class.Views
         protected bool LoadMainWebFileImport { get; set; } = false;
 
         protected Dictionary<string, string> MetaDatas { get; private set; } = new Dictionary<string, string>();
+
+
+        /// <summary>
+        /// An object for display toast notifications
+        /// </summary>
+        public ToastManager ToastManager { get; set; }
+        /// <summary>
+        /// A waiting spinner
+        /// </summary>
+        public Spinner WaitingSpinner { get; set; }
 
         /// <summary>
         /// Common class for views
@@ -189,6 +201,16 @@ namespace MarquitoUtils.Web.React.Class.Views
         private string GetMetaData(string metaName, string metaContent)
         {
             return $"<meta name=\"{metaName}\" content=\"{metaContent}\" />";
+        }
+
+        protected void InitToastManager()
+        {
+            this.ToastManager = new ToastManager("toastManager");
+        }
+
+        protected void InitWaitingSpinner()
+        {
+            this.WaitingSpinner = new Spinner("waitingSpinner", EnumIcon.Loading2);
         }
     }
 

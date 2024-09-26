@@ -95,12 +95,12 @@ namespace MarquitoUtils.Web.React.Class.Components
         /// <typeparam name="TUrl">The url for retrieve the Ajax</typeparam>
         /// <param name="webEvent">The event type</param>
         /// <param name="url">The url</param>
-        /// <param name="jsFunction">The function to execute on the front when event is triggered</param>
-        public void AddAjaxEvent<TUrl, TAjax>(EnumWebEvent webEvent, TUrl url, string jsFunction = "")
+        /// <param name="formElement">The form element, for formalize data</param>
+        public void AddAjaxEvent<TUrl, TAjax>(EnumWebEvent webEvent, TUrl url, string formElement = "")
             where TUrl : WebAjaxUrl<TAjax>
             where TAjax : WebAjax
         {
-            string ajaxEvent = $"window.ReactWidgetFactory.AjaxUtils().PostDataWithUrl({url})";
+            string ajaxEvent = $"window.ReactWidgetFactory.AjaxUtils().PostDataWithUrl({url}, \"{formElement}\")";
 
             if (this.Events.ContainsKey(webEvent))
             {
@@ -118,12 +118,12 @@ namespace MarquitoUtils.Web.React.Class.Components
         /// <typeparam name="TUrl">The url for retrieve the Action</typeparam>
         /// <param name="webEvent">The event type</param>
         /// <param name="url">The url</param>
-        /// <param name="jsFunction">The function to execute on the front when event is triggered</param>
-        public void AddActionEvent<TUrl, TAction>(EnumWebEvent webEvent, TUrl url, string jsFunction = "")
+        /// <param name="formElement">The form element, for formalize data</param>
+        public void AddActionEvent<TUrl, TAction>(EnumWebEvent webEvent, TUrl url, string formElement = "")
             where TUrl : WebActionUrl<TAction>
             where TAction : WebAction
         {
-            string actionEvent = $"window.ReactWidgetFactory.AjaxUtils().PostDataWithUrl({url})";
+            string actionEvent = $"window.ReactWidgetFactory.AjaxUtils().PostDataWithUrl({url}, \"{formElement}\")";
 
             if (this.Events.ContainsKey(webEvent))
             {

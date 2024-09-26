@@ -16,10 +16,10 @@ namespace MarquitoUtils.Web.React.Class.Enums
         }
 
         public string PlaceHolder { get; private set; } = "";
-        public EnumInputType InputType { get; private set; } = EnumInputType.Text;
+        public enumInputType InputType { get; private set; } = enumInputType.Text;
         public enumTextBoxType InputTypeValue { get; private set; }
 
-        private EnumTextBoxType(string placeHolder, EnumInputType inputType, enumTextBoxType inputTypeValue)
+        private EnumTextBoxType(string placeHolder, enumInputType inputType, enumTextBoxType inputTypeValue)
         {
             this.PlaceHolder = placeHolder;
             this.InputType = inputType;
@@ -30,7 +30,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("", EnumInputType.Text, enumTextBoxType.TEXT);
+                return new EnumTextBoxType("", enumInputType.Text, enumTextBoxType.TEXT);
             }
         }
 
@@ -38,7 +38,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("0", EnumInputType.Number, enumTextBoxType.INCREMENT);
+                return new EnumTextBoxType("0", enumInputType.Number, enumTextBoxType.INCREMENT);
             }
         }
 
@@ -46,7 +46,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("0.00", EnumInputType.Currency, enumTextBoxType.CURRENCY);
+                return new EnumTextBoxType("0.00", enumInputType.Currency, enumTextBoxType.CURRENCY);
             }
         }
 
@@ -54,7 +54,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("0", EnumInputType.Number, enumTextBoxType.QUANTITY);
+                return new EnumTextBoxType("0", enumInputType.Number, enumTextBoxType.QUANTITY);
             }
         }
 
@@ -62,7 +62,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("********", EnumInputType.Password, enumTextBoxType.PASSWORD);
+                return new EnumTextBoxType("********", enumInputType.Password, enumTextBoxType.PASSWORD);
             }
         }
 
@@ -70,7 +70,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("example@domain.com", EnumInputType.Email, enumTextBoxType.EMAIL);
+                return new EnumTextBoxType("example@domain.com", enumInputType.Email, enumTextBoxType.EMAIL);
             }
         }
 
@@ -78,7 +78,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("0102030405", EnumInputType.Text, enumTextBoxType.PHONE_NUMBER);
+                return new EnumTextBoxType("0102030405", enumInputType.Text, enumTextBoxType.PHONE_NUMBER);
             }
         }
 
@@ -86,7 +86,7 @@ namespace MarquitoUtils.Web.React.Class.Enums
         {
             get
             {
-                return new EnumTextBoxType("http://www.exemple.com", EnumInputType.Text, enumTextBoxType.TEXT);
+                return new EnumTextBoxType("http://www.exemple.com", enumInputType.Text, enumTextBoxType.TEXT);
             }
         }
     }

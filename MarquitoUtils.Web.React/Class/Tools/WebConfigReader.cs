@@ -33,7 +33,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
                             {
                                 case "color":
                                     EnumColor color = EnumClass
-                                        .GetEnumByName<EnumColor, EnumColorAttr>(configNode.Value.Trim());
+                                        .GetEnumByName<EnumColor>(configNode.Value.Trim());
                                     config.DefaultBackgroundColor = color;
                                     break;
                                 default:
@@ -52,7 +52,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
                             {
                                 case "color":
                                     EnumColor color = EnumClass
-                                        .GetEnumByName<EnumColor, EnumColorAttr>(configNode.Value.Trim());
+                                        .GetEnumByName<EnumColor>(configNode.Value.Trim());
                                     config.DefaultBorderColor = color;
                                     break;
                                 case "style":
@@ -74,7 +74,7 @@ namespace MarquitoUtils.Web.React.Class.Tools
                             {
                                 case "color":
                                     EnumColor color = EnumClass
-                                        .GetEnumByName<EnumColor, EnumColorAttr>(configNode.Value.Trim());
+                                        .GetEnumByName<EnumColor>(configNode.Value.Trim());
                                     config.DefaultFontColor = color;
                                     break;
                                 case "size":

@@ -122,28 +122,20 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// Return index
         /// </summary>
         /// <returns>The index view</returns>
-        [Route("")]
-        [Route("index")]
-        [Route("~/")]
-        public virtual IActionResult Index()
-        {
-            return this.GetView("Home/Index");
-        }
+        public abstract IActionResult Index();
 
         /// <summary>
         /// Get web data engine
         /// </summary>
         /// <param name="parameters">Parameters from POST or GET query</param>
         /// <returns></returns>
-        private WebDataEngine GetWebDataEngine(List<Parameter> parameters = null)
+        protected WebDataEngine GetWebDataEngine(List<Parameter> parameters = null)
         {
             WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
 
             webDataEngine.ControllerContext = this.ControllerContext;
             webDataEngine.ControllerViewData = this.ViewData;
             webDataEngine.ControllerTempData = this.TempData;
-
-            webDataEngine.AjaxParameters = Utils.Nvl(parameters);
 
 
             if (this.Request.HasFormContentType && Utils.IsNotNull(this.Request.Form))
@@ -154,22 +146,28 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                     webDataEngine.Files = this.Request.Form.Files.ToList();
                 }
                 // Get form data if we have it
-                this.Request.Form.Where(formData =>
-                {
-                    return formData.Key == "form";
-                }).Select(formData =>
-                {
-                    return formData.Value;
-                }).ToList().ForEach(formData =>
-                {
-                    webDataEngine.FormParameters = Utils.GetDeserializedObject<Dictionary<string, object>>(formData)
-                        .Select(parameter =>
-                        {
-                            return new Parameter(parameter.Key, parameter.Value);
-                        }).ToList();
-                });
-
+                this.Request.Form.Where(formData => formData.Key == "form").Select(formData => formData.Value)
+                    .ToList().ForEach(formData =>
+                    {
+                        webDataEngine.FormParameters = Utils.GetDeserializedObject<Dictionary<string, object>>(formData)
+                            .Select(parameter =>
+                            {
+                                return new Parameter(parameter.Key, parameter.Value);
+                            }).ToList();
+                    });
+                // Get request data if we have it
+                this.Request.Form.Where(formData => formData.Key == "parameters").Select(formData => formData.Value)
+                    .ToList().ForEach(formData =>
+                    {
+                        webDataEngine.AjaxParameters = Utils.GetDeserializedObject<Dictionary<string, object>>(formData)
+                            .Select(parameter =>
+                            {
+                                return new Parameter(parameter.Key, parameter.Value);
+                            }).ToList();
+                    });
             }
+
+            webDataEngine.AjaxParameters.AddRange(Utils.Nvl(parameters));
 
             return webDataEngine;
         }
@@ -183,7 +181,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         [AllowCrossSiteJson]
         public virtual IActionResult ExecAjax()
         {
-            return this.ExecAjax(Assembly.GetExecutingAssembly());
+            return this.ExecAjax(Assembly.GetEntryAssembly());
         }
 
         /// <summary>
@@ -310,9 +308,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <returns>A view</returns>
         [Route("frag")]
         [AllowCrossSiteJson]
-        public virtual IActionResult GetView(string frag_name)
+        public virtual IActionResult GetView(string frag_name, string? redirectPage = null)
         {
-            return this.GetView(frag_name, Assembly.GetExecutingAssembly());
+            return this.GetView(frag_name, Assembly.GetEntryAssembly(), redirectPage);
         }
 
         /// <summary>
@@ -321,7 +319,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <param name="frag_name">View's name</param>
         /// <param name="assembly">The assembly where the view is located</param>
         /// <returns>A view</returns>
-        protected IActionResult GetView(string frag_name, Assembly assembly)
+        protected IActionResult GetView(string frag_name, Assembly assembly, string? redirectPage = null)
         {
             IActionResult viewResult = new ContentResult();
 
@@ -346,25 +344,33 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             // The view
             WebView webView = null;
 
-            if (Utils.IsNotNull(view))
-            {
-                // Init web data engine
-                WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
-                // Call action before the view
-                this.ExecAction("", "", assembly);
-                // Create view instance
-                webView = (WebView)Activator.CreateInstance(view, webDataEngine, this.NotifyHubProxy);
-                this.AddMainReactFileToView(webView);
-                // Store view in context for get data inside the view
-                this.HttpContext.Items.Add("WebView", webView);
-                // Load the html file with view
-                viewResult = PartialView("/Views/" + frag_name + ".cshtml");
+            // Init web data engine
+            WebDataEngine webDataEngine = this.GetWebDataEngine(parameters);
 
+            if (Utils.IsEmpty(redirectPage) || webDataEngine.IsUserAuthenticated())
+            {
+                if (Utils.IsNotNull(view))
+                {
+                    // Call action before the view
+                    this.ExecAction("", "", assembly);
+                    // Create view instance
+                    webView = (WebView)Activator.CreateInstance(view, webDataEngine, this.NotifyHubProxy);
+                    this.AddMainReactFileToView(webView);
+                    // Store view in context for get data inside the view
+                    this.HttpContext.Items.Add("WebView", webView);
+                    // Load the html file with view
+                    viewResult = PartialView("/Views/" + frag_name + ".cshtml");
+
+                }
+                else
+                {
+                    // View not found
+                    viewResult = Content(frag_name + " not found !");
+                }
             }
             else
             {
-                // View not found
-                viewResult = Content(frag_name + " not found !");
+                return this.GetRedirectResult(redirectPage);
             }
 
             return viewResult;
@@ -412,6 +418,16 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             result.FileDownloadName = fileName;
 
             return result;
+        }
+
+        /// <summary>
+        /// Get redirect result
+        /// </summary>
+        /// <param name="redirectUrl">The url</param>
+        /// <returns>Redirect result</returns>
+        protected RedirectResult GetRedirectResult(string redirectUrl)
+        {
+            return new RedirectResult(redirectUrl);
         }
 
         protected JsonResult GetSuccessJsonResult(string resultMessage = "", object content = null)
