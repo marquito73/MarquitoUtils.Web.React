@@ -304,6 +304,22 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <summary>
         /// Get view
         /// </summary>
+        /// <typeparam name="TView">The view</typeparam>
+        /// <param name="redirectPage">The redirect page</param>
+        /// <returns>A view</returns>
+        [Route("frag")]
+        [AllowCrossSiteJson]
+        protected IActionResult GetView<TView>(string? redirectPage = null)
+            where TView : WebView
+        {
+            return this.GetView(typeof(TView).FullName
+                .Replace($"{this.ViewDefaultLocation}.", "")
+                .Replace(".", "/"), redirectPage);
+        }
+
+        /// <summary>
+        /// Get view
+        /// </summary>
         /// <param name="frag_name">View's name</param>
         /// <returns>A view</returns>
         [Route("frag")]
