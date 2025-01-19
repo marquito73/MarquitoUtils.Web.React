@@ -122,11 +122,12 @@ namespace MarquitoUtils.Web.React.Class.Communication
             return result;
         }
 
-        protected JsonResult GetSuccessJsonResult(string resultMessage = "", object content = null)
+        protected JsonResult GetSuccessJsonResult(string resultMessage = "", string resultTitle = "", object content = null)
         {
             JsonResultContent result = new JsonResultContent()
             {
                 State = Enums.JSON.EnumJsonResponseState.Success.ToString().ToLower(),
+                Title = resultTitle,
                 Message = resultMessage,
                 Data = content,
             };
@@ -134,11 +135,12 @@ namespace MarquitoUtils.Web.React.Class.Communication
             return this.GetJsonResult(result);
         }
 
-        protected JsonResult GetErrorJsonResult(string resultMessage = "", object content = null)
+        protected JsonResult GetErrorJsonResult(string resultMessage = "", string resultTitle = "", object content = null)
         {
             JsonResultContent result = new JsonResultContent()
             {
                 State = Enums.JSON.EnumJsonResponseState.Error.ToString().ToLower(),
+                Title = resultTitle,
                 Message = resultMessage,
                 Data = content,
             };
