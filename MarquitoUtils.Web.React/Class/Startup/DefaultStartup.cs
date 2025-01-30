@@ -107,8 +107,16 @@ namespace MarquitoUtils.Web.React.Class.Startup
             if (!this.SqlScriptService.CheckIfTableExist("translation") 
                 && !this.SqlScriptService.CheckIfTableExist("translation_field"))
             {
-                // Get script for save all sql files executed
+                // Get script for translations
                 CustomFile sqlTranslations = WebFileHelper.GetSqlFile("002_Translations");
+                // Execute it
+                this.SqlScriptService.ExecuteSqlScript(sqlTranslations.FileName, sqlTranslations.Content, false);
+            }
+            // If user track history table not found, we need to create it
+            if (!this.SqlScriptService.CheckIfTableExist("user_track_history"))
+            {
+                // Get script for user track history
+                CustomFile sqlTranslations = WebFileHelper.GetSqlFile("003_UserTrackHistory");
                 // Execute it
                 this.SqlScriptService.ExecuteSqlScript(sqlTranslations.FileName, sqlTranslations.Content, false);
             }

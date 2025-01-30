@@ -180,6 +180,9 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// <returns>Redirect result</returns>
         protected RedirectResult GetRedirectResult(string redirectUrl)
         {
+            /*return this.GetView(typeof(TView).FullName
+                .Replace($"{this.ViewDefaultLocation}.", "")
+                .Replace(".", "/"), redirectPage);*/
             //this.WebDataEngine.WebContext.Response.Headers.Add("Access-Control-Expose-Headers", "Location");
             return new RedirectResult(redirectUrl);
         }

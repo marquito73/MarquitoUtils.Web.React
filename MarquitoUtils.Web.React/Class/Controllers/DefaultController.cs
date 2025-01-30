@@ -3,6 +3,8 @@ using MarquitoUtils.Main.Class.Entities.Param;
 using MarquitoUtils.Main.Class.Entities.Sql;
 using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Service.Files;
+using MarquitoUtils.Main.Class.Service.Sql;
+using MarquitoUtils.Main.Class.Service.User;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Attributes;
@@ -57,6 +59,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// </summary>
         protected DefaultDbContext DbContext { get; set; }
         private IFileService FileService { get; set; } = new FileService();
+        private IUserTrackService UserTrackService { get; set; } = new UserTrackService();
 
         /// <summary>
         /// Default controller
@@ -94,7 +97,30 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 this.FileService.GetDefaultDatabaseConfiguration();
 
                 this.DbContext = DefaultDbContext.GetDbContext<T>(databaseConfiguration);
+
+                this.UserTrackService.EntityService = this.GetEntityService();
             }
+        }
+
+        /// <summary>
+        /// Get entity service
+        /// </summary>
+        /// <returns>The entity service</returns>
+        /// <exception cref="Exception"></exception>
+        protected IEntityService GetEntityService()
+        {
+            IEntityService entityService = new EntityService();
+
+            if (Utils.IsNotNull(this.DbContext))
+            {
+                entityService.DbContext = this.DbContext;
+            }
+            else
+            {
+                throw new Exception("Can't get entity service without DbContext specified to the WebClass");
+            }
+
+            return entityService;
         }
 
         /// <summary>
@@ -340,6 +366,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             IActionResult viewResult = new ContentResult();
 
             this.InitDbContext();
+
+            // Track user visit count
+            this.UserTrackService.SaveUserTrack(this.GetWebDataEngine().GetUserIPAddress());
 
             // Params of the request
             List<Parameter> parameters = ViewHelper.GetValuesFromUrl(this.Request.QueryString.Value);
