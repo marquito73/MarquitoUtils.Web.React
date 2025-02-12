@@ -10,5 +10,6 @@
         ValidatePopup,
         BeforeOpenPopup,
         SaveData,
+        UploadFile,
     }
 }
