@@ -40,11 +40,10 @@ namespace MarquitoUtils.Web.React.Class.Communication
         {
             this.WebDataEngine = webDataEngine;
             this.CurrentLanguage = webDataEngine.CurrentLanguage;
-        }
 
-        public WebClass(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : this(webDataEngine)
-        {
-            this.NotifyHubProxy = notifyHubProxy;
+            string entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
+
+            this.ViewDefaultLocation = $"{entryAssemblyName}.Views";
         }
 
         protected enumLang GetCurrentLanguage()
