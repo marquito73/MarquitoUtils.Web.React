@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Chart.Radar
 {
-    public interface IRadarData
+    public interface IRadarData : IChartData
     {
         public string Subject { get; set; }
     }

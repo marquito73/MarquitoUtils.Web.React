@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Components.Chart
 {
-    public abstract class Chart : Component
+    public abstract class Chart<TData> : Component
+        where TData : IChartData
     {
+        public IList<TData> Data { get; set; } = new List<TData>();
         public string LabelColor { get; set; } = "gray";
         public int LabelSize { get; set; } = 20;
         public string ChartTitle { get; set; } = "";
