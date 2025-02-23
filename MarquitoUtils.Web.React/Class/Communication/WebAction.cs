@@ -1,5 +1,4 @@
 ﻿using MarquitoUtils.Web.React.Class.Enums.Action;
-using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,7 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// A web action, a class herited of this class can be called when call view or post data
         /// </summary>
         /// <param name="webDataEngine">A web tool for recover data stored inside session</param>
-        public WebAction(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
+        public WebAction(WebDataEngine webDataEngine) : base(webDataEngine)
         {
 
         }

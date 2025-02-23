@@ -1,16 +1,9 @@
 ﻿using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Tools;
-using MarquitoUtils.Web.React.Class.Components;
 using MarquitoUtils.Web.React.Class.Components.Grid;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MarquitoUtils.Main.Class.Logger;
-using MarquitoUtils.Web.React.Class.NotifyHub;
 
 namespace MarquitoUtils.Web.React.Class.Ajax.Grid
 {
@@ -44,7 +37,7 @@ namespace MarquitoUtils.Web.React.Class.Ajax.Grid
         /// Ajax for a React grid, called for get next rows, manage filters, etc ...
         /// </summary>
         /// <param name="webDataEngine">The web data engine</param>
-        public AjxReactGrid(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
+        public AjxReactGrid(WebDataEngine webDataEngine) : base(webDataEngine)
         {
         }
 

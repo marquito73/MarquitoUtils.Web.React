@@ -17,8 +17,7 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// Class for render fragment of cshtml inside another view
         /// </summary>
         /// <param name="webDataEngine">Web engine, contain data about session</param>
-        /// <param name="notifyHubProxy">Notify hub proxy</param>
-        protected WebFragment(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
+        protected WebFragment(WebDataEngine webDataEngine) : base(webDataEngine)
         {
         }
 

@@ -61,24 +61,6 @@ namespace MarquitoUtils.Web.React.Class.Views
         protected WebView(WebDataEngine webDataEngine) : base(webDataEngine)
         {
             this.Init();
-            if (this.LoadMainWebFileImport) 
-            {
-                WebFileImport newWebFileImport = WebFileHelper.GetMainWebFileImport(this.LoadingIcon, 
-                    this.ContainerIdForLoading);
-                newWebFileImport.Merge(this.WebFileImport);
-                this.WebFileImport = newWebFileImport;
-            }
-            this.AfterInit();
-        }
-
-        /// <summary>
-        /// Common class for views
-        /// </summary>
-        /// <param name="webDataEngine">Web engine, contain data about session</param>
-        /// <param name="notifyHubProxy">Notify hub proxy</param>
-        protected WebView(WebDataEngine webDataEngine, NotifyHubProxy notifyHubProxy) : base(webDataEngine, notifyHubProxy)
-        {
-            this.Init();
             if (this.LoadMainWebFileImport)
             {
                 WebFileImport newWebFileImport = WebFileHelper.GetMainWebFileImport(this.LoadingIcon, this.ContainerIdForLoading);
@@ -95,16 +77,6 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// </summary>
         /// <param name="webContext">Http context for build WebDataEngine</param>
         protected WebView(HttpContext webContext) : this(new WebDataEngine(webContext))
-        {
-
-        }
-
-        /// <summary>
-        /// Common class for views
-        /// </summary>
-        /// <param name="webContext">Http context for build WebDataEngine</param>
-        /// <param name="notifyHubProxy">Notify hub proxy</param>
-        protected WebView(HttpContext webContext, NotifyHubProxy notifyHubProxy) : this(new WebDataEngine(webContext), notifyHubProxy)
         {
 
         }

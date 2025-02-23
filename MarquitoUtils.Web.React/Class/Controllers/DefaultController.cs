@@ -1,6 +1,5 @@
 ﻿using MarquitoUtils.Main.Class.Entities.File;
 using MarquitoUtils.Main.Class.Entities.Param;
-using MarquitoUtils.Main.Class.Entities.Sql;
 using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Service.Files;
 using MarquitoUtils.Main.Class.Service.Sql;
@@ -11,9 +10,9 @@ using MarquitoUtils.Web.React.Class.Attributes;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Communication.JSON;
 using MarquitoUtils.Web.React.Class.Enums.Action;
-using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Views;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -25,14 +24,15 @@ namespace MarquitoUtils.Web.React.Class.Controllers
     /// Default controller
     /// </summary>
     [Route("home")]
-    public abstract class DefaultController<T> : Controller
-        where T : DefaultDbContext
+    public abstract class DefaultController<TController, THub> : Controller
+        where TController : DefaultDbContext
+        where THub : NotifyHub.NotifyHub
     {
         /// <summary>
         /// Notify hub proxy, for communication with clients
         /// </summary>
-        protected NotifyHubProxy NotifyHubProxy { get; private set; }
-        protected ILogger<DefaultController<T>> _logger;
+        protected IHubContext<THub> NotifyHub { get; private set; }
+        protected ILogger<DefaultController<TController, THub>> _logger;
         /// <summary>
         /// Ajax default location
         /// </summary>
@@ -65,7 +65,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// Default controller
         /// </summary>
         /// <param name="logger">Logger</param>
-        protected DefaultController(ILogger<DefaultController<T>> logger)
+        protected DefaultController(ILogger<DefaultController<TController, THub>> logger)
         {
             this._logger = logger;
 
@@ -81,9 +81,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// </summary>
         /// <param name="logger">Logger</param>
         /// <param name="notifyHub">Notify hub</param>
-        protected DefaultController(ILogger<DefaultController<T>> logger, IHubContext<NotifyHub.NotifyHub> notifyHub) : this(logger)
+        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, IHubContext<THub> notifyHub) : this(logger)
         {
-            this.NotifyHubProxy = new NotifyHubProxy(notifyHub);
+            this.NotifyHub = notifyHub;
         }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             if (Utils.IsNotNull(ajax))
             {
                 // Create ajax instance
-                WebAjax webAjax = (WebAjax)Activator.CreateInstance(ajax, webDataEngine, this.NotifyHubProxy);
+                WebAjax webAjax = (WebAjax)Activator.CreateInstance(ajax, webDataEngine);
                 // Execute the ajax
                 ajaxResult = webAjax.Exec(ajax_action);
             }
@@ -315,7 +315,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             if (Utils.IsNotNull(action))
             {
                 // Init action
-                WebAction webAction = (WebAction)Activator.CreateInstance(action, webDataEngine, this.NotifyHubProxy);
+                WebAction webAction = (WebAction)Activator.CreateInstance(action, webDataEngine);
 
                 actionResult = webAction.Exec(EnumUtils.GetEnum<EnumAction>(action_action));
             }
@@ -399,7 +399,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                     // Call action before the view
                     this.ExecAction("", "", assembly);
                     // Create view instance
-                    webView = (WebView)Activator.CreateInstance(view, webDataEngine, this.NotifyHubProxy);
+                    webView = (WebView)Activator.CreateInstance(view, webDataEngine);
                     this.AddMainReactFileToView(webView);
                     // Store view in context for get data inside the view
                     this.HttpContext.Items.Add("WebView", webView);

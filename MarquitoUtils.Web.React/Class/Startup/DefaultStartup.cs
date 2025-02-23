@@ -43,10 +43,6 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// The database context
         /// </summary>
         protected T DbContext { get; private set; }
-        /// <summary>
-        /// The notify hub name
-        /// </summary>
-        protected string NotifyHubName { get; private set; }
 
         /// <summary>
         /// Default startup class
@@ -54,10 +50,9 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// <param name="configuration">Configuration properties</param>
         /// <param name="notifyHubName">The notify hub name</param>
         /// <param name="executeScripts">Execute sql scripts ?</param>
-        public DefaultStartup(IConfiguration configuration, string notifyHubName = "", bool executeScripts = false)
+        public DefaultStartup(IConfiguration configuration, bool executeScripts = false)
         {
             this.Configuration = configuration;
-            this.NotifyHubName = notifyHubName;
 
             if (executeScripts)
             {
@@ -183,12 +178,8 @@ namespace MarquitoUtils.Web.React.Class.Startup
             app.UseEndpoints(endpoints =>
             {
                 this.ConfigureEndpointController(endpoints);
-
-                // Manage notify hub
-                if (Utils.IsNotEmpty(this.NotifyHubName))
-                {
-                    endpoints.MapHub<NotifyHub.NotifyHub>(this.NotifyHubName);
-                }
+                // Manage notify hubs
+                this.ConfigureHubs(endpoints);
             });
 
             // Initialise ReactJS.NET. Must be before static files.
@@ -203,8 +194,11 @@ namespace MarquitoUtils.Web.React.Class.Startup
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+        }
 
-            //endpoints.MapControllers();
+        protected virtual void ConfigureHubs(IEndpointRouteBuilder endpoints)
+        {
+
         }
 
         /// <summary>

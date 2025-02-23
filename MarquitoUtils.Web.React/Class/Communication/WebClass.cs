@@ -1,12 +1,12 @@
-﻿using MarquitoUtils.Main.Class.Entities.Translation;
 using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Translations;
 using MarquitoUtils.Web.React.Class.Communication.JSON;
-using MarquitoUtils.Web.React.Class.NotifyHub;
 using MarquitoUtils.Web.React.Class.Tools;
+using MarquitoUtils.Web.React.Class.Views;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Reflection;
@@ -28,9 +28,9 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// </summary>
         protected CultureInfo CurrentLanguage { get; private set; }
         /// <summary>
-        /// Notify hub proxy, for send and get data with signalR
+        /// View default location
         /// </summary>
-        protected NotifyHubProxy NotifyHubProxy { get; set; }
+        protected string ViewDefaultLocation { get; set; } = "";
 
         /// <summary>
         /// Web class
