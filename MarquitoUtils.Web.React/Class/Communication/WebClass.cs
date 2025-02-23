@@ -1,5 +1,4 @@
-using MarquitoUtils.Main.Class.Service.General;
-using MarquitoUtils.Main.Class.Service.Sql;
+﻿using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Translations;
@@ -131,10 +130,10 @@ namespace MarquitoUtils.Web.React.Class.Communication
                 Data = content,
             };
 
-            return this.GetJsonResult(result);
+            return this.GetJsonResult(result, 200);
         }
 
-        protected JsonResult GetErrorJsonResult(string resultMessage = "", string resultTitle = "", object content = null)
+        protected JsonResult GetErrorJsonResult(string resultMessage = "", string resultTitle = "", object content = null, int statusCode = StatusCodes.Status400BadRequest)
         {
             JsonResultContent result = new JsonResultContent()
             {
@@ -144,17 +143,21 @@ namespace MarquitoUtils.Web.React.Class.Communication
                 Data = content,
             };
 
-            return this.GetJsonResult(result);
+            return this.GetJsonResult(result, statusCode);
         }
 
         /// <summary>
         /// Get JSON content result
         /// </summary>
-        /// <param name="content">The content</param>
+        /// <param name="result">The content</param>
+        /// <param name="statusCode">The HTTP satus code</param>
         /// <returns>JSON content result</returns>
-        private JsonResult GetJsonResult(JsonResultContent result)
+        private JsonResult GetJsonResult(JsonResultContent result, int statusCode)
         {
-            return new JsonResult(result);
+            return new JsonResult(result)
+            {
+                StatusCode = statusCode,
+            };
         }
 
         /// <summary>
@@ -179,11 +182,22 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// <returns>Redirect result</returns>
         protected RedirectResult GetRedirectResult(string redirectUrl)
         {
-            /*return this.GetView(typeof(TView).FullName
-                .Replace($"{this.ViewDefaultLocation}.", "")
-                .Replace(".", "/"), redirectPage);*/
-            //this.WebDataEngine.WebContext.Response.Headers.Add("Access-Control-Expose-Headers", "Location");
             return new RedirectResult(redirectUrl);
+        }
+
+        /// <summary>
+        /// Get redirect result
+        /// </summary>
+        /// <returns>Redirect result</returns>
+        protected RedirectResult GetRedirectResult<TView>()
+            where TView : WebView
+        {
+            string redirect = typeof(TView).FullName
+                .Replace($"{this.ViewDefaultLocation}.", "")
+                .Replace(".View", ".")
+                .Replace(".", "/");
+
+            return this.GetRedirectResult($"/{redirect}");
         }
     }
 }

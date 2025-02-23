@@ -96,7 +96,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 DatabaseConfiguration databaseConfiguration =
                 this.FileService.GetDefaultDatabaseConfiguration();
 
-                this.DbContext = DefaultDbContext.GetDbContext<T>(databaseConfiguration);
+                this.DbContext = DefaultDbContext.GetDbContext<TController>(databaseConfiguration);
 
                 this.UserTrackService.EntityService = this.GetEntityService();
             }
@@ -475,6 +475,21 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             return new RedirectResult(redirectUrl);
         }
 
+        /// <summary>
+        /// Get redirect result
+        /// </summary>
+        /// <returns>Redirect result</returns>
+        protected RedirectResult GetRedirectResult<TView>()
+            where TView : WebView
+        {
+            string redirect = typeof(TView).FullName
+                .Replace($"{this.ViewDefaultLocation}.", "")
+                .Replace(".View", ".")
+                .Replace(".", "/");
+
+            return this.GetRedirectResult($"/{redirect}");
+        }
+
         protected JsonResult GetSuccessJsonResult(string resultMessage = "", string resultTitle = "", object content = null)
         {
             JsonResultContent result = new JsonResultContent()
@@ -485,10 +500,10 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 Data = content,
             };
 
-            return this.GetJsonResult(result);
+            return this.GetJsonResult(result, StatusCodes.Status200OK);
         }
 
-        protected JsonResult GetErrorJsonResult(string resultMessage = "", string resultTitle = "", object content = null)
+        protected JsonResult GetErrorJsonResult(string resultMessage = "", string resultTitle = "", object content = null, int statusCode = StatusCodes.Status400BadRequest)
         {
             JsonResultContent result = new JsonResultContent()
             {
@@ -498,17 +513,21 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                 Data = content,
             };
 
-            return this.GetJsonResult(result);
+            return this.GetJsonResult(result, statusCode);
         }
 
         /// <summary>
         /// Get JSON content result
         /// </summary>
-        /// <param name="content">The content</param>
+        /// <param name="result">The content</param>
+        /// <param name="statusCode">The HTTP satus code</param>
         /// <returns>JSON content result</returns>
-        private JsonResult GetJsonResult(JsonResultContent result)
+        private JsonResult GetJsonResult(JsonResultContent result, int statusCode)
         {
-            return new JsonResult(result);
+            return new JsonResult(result)
+            {
+                StatusCode = statusCode,
+            };
         }
     }
 }
