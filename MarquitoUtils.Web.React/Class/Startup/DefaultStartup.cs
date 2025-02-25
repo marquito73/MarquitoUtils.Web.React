@@ -1,12 +1,9 @@
 ﻿using MarquitoUtils.Main.Class.Entities.File;
-using MarquitoUtils.Main.Class.Entities.Sql;
-using MarquitoUtils.Main.Class.Tools.Encryption;
 using MarquitoUtils.Web.React.Class.Tools;
 using Microsoft.Extensions.Configuration;
 using System.Reflection;
 using Microsoft.Extensions.FileProviders;
 using MarquitoUtils.Main.Class.Service.Sql;
-using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Main.Class.Sql;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -145,7 +142,12 @@ namespace MarquitoUtils.Web.React.Class.Startup
             // Make sure a JS engine is registered, or you will get an error!
             services.AddJsEngineSwitcher(options => options.DefaultEngineName = V8JsEngine.EngineName)
               .AddV8();
-            services.AddSignalR();
+            // Add signalR to the website
+            services.AddSignalR()
+                // Disable camelCase naming policy
+                .AddJsonProtocol(options => {
+                    options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+                });
         }
 
         /// <summary>

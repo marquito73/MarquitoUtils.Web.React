@@ -404,13 +404,13 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                     // Store view in context for get data inside the view
                     this.HttpContext.Items.Add("WebView", webView);
                     // Load the html file with view
-                    viewResult = PartialView("/Views/" + frag_name + ".cshtml");
+                    viewResult = View($"/Views/{frag_name}.cshtml");
 
                 }
                 else
                 {
                     // View not found
-                    viewResult = Content(frag_name + " not found !");
+                    viewResult = Content($"{frag_name} not found !");
                 }
             }
             else
