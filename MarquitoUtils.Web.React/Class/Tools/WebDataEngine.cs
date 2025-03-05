@@ -1,10 +1,10 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
+using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Globalization;
 
@@ -317,6 +317,18 @@ namespace MarquitoUtils.Web.React.Class.Tools
             return this.GetBooleanFromQueryOrForm(this.AjaxParameters, parameterName);
         }
 
+        public T GetFromQuery<T>(string parameterName)
+            where T : class, new()
+        {
+            return this.GetFromQueryOrForm<T>(this.AjaxParameters, parameterName);
+        }
+
+        public TEnum? GetEnumFromQuery<TEnum>(string parameterName)
+            where TEnum : struct, Enum
+        {
+            return this.GetEnumFromQueryOrForm<TEnum>(this.AjaxParameters, parameterName);
+        }
+
         /// <summary>
         /// Get generic list from query
         /// </summary>
@@ -389,6 +401,18 @@ namespace MarquitoUtils.Web.React.Class.Tools
         public bool GetBooleanFromForm(string parameterName)
         {
             return this.GetBooleanFromQueryOrForm(this.FormParameters, parameterName);
+        }
+
+        public T GetFromForm<T>(string parameterName)
+            where T : class, new()
+        {
+            return this.GetFromQueryOrForm<T>(this.FormParameters, parameterName);
+        }
+
+        public TEnum? GetEnumFromForm<TEnum>(string parameterName)
+            where TEnum : struct, Enum
+        {
+            return this.GetEnumFromQueryOrForm<TEnum>(this.FormParameters, parameterName);
         }
 
         /// <summary>
@@ -511,6 +535,35 @@ namespace MarquitoUtils.Web.React.Class.Tools
             if (Utils.IsNotNull(stringvalue))
             {
                 result = Utils.GetAsBoolean(stringvalue);
+            }
+
+            return result;
+        }
+
+        private T GetFromQueryOrForm<T>(List<Parameter> parameters, string parameterName)
+            where T : class, new()
+        {
+            T result = new T();
+
+            string stringvalue = this.GetStringFromQueryOrForm(parameters, parameterName);
+
+            if (Utils.IsNotNull(stringvalue))
+            {
+                result = stringvalue as T;
+            }
+
+            return result;
+        }
+
+        private TEnum? GetEnumFromQueryOrForm<TEnum>(List<Parameter> parameters, string parameterName)
+            where TEnum : struct, Enum
+        {
+            TEnum? result = null;
+
+            string stringvalue = this.GetStringFromQueryOrForm(parameters, parameterName);
+            if (Utils.IsNotNull(stringvalue))
+            {
+                result = EnumUtils.GetEnum<TEnum>(stringvalue);
             }
 
             return result;

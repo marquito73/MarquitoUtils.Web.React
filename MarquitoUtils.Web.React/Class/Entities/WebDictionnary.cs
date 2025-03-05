@@ -43,8 +43,12 @@ namespace MarquitoUtils.Web.React.Class.Entities
             {
                 key = (int)key;
             }
+            else if (key is string)
+            {
+                key = $"'{key as string}'";
+            }
 
-            return $"[{key},{kv.Value}],";
+            return $"[{key},{kv.Value}]";
         }
     }
 }

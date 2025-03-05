@@ -1,9 +1,15 @@
-﻿namespace MarquitoUtils.Web.React.Class.Components.Chart.Trading
+﻿using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Entities;
+using MarquitoUtils.Web.React.Class.Enums.Action;
+using MarquitoUtils.Web.React.Class.Url;
+
+namespace MarquitoUtils.Web.React.Class.Components.Chart.Trading
 {
     /// <summary>
     /// A chart with candles
     /// </summary>
-    public class CandleChart : Chart<CandleData>
+    public class CandleChart<TActionUrl> : Chart<CandleData>
+        where TActionUrl : WebAction
     {
         /// <summary>
         /// The maximum price
@@ -45,6 +51,19 @@
         /// Period (in seconds)
         /// </summary>
         public int Period { get; set; }
+        /// <summary>
+        /// The price label
+        /// </summary>
+        public string? PriceLabel { get; set; }
+        /// <summary>
+        /// The volume label
+        /// </summary>
+        public string? VolumeLabel { get; set; }
+        public WebDictionnary<string, int> PeriodsAvailable { get; set; } = new WebDictionnary<string, int>();
+        /// <summary>
+        /// The url to load the candle data
+        /// </summary>
+        public WebActionUrl<TActionUrl> ReloadCandleDataURL { get; private set; } = new WebActionUrl<TActionUrl>(EnumAction.GetData);
 
         /// <summary>
         /// A chart with candles

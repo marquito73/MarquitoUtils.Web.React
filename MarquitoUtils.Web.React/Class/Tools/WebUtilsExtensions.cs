@@ -1,10 +1,6 @@
-﻿using MarquitoUtils.Web.React.Class.Views;
+﻿using MarquitoUtils.Web.React.Class.Entities;
+using MarquitoUtils.Web.React.Class.Views;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MarquitoUtils.Web.React.Class.Tools
 {
@@ -14,6 +10,15 @@ namespace MarquitoUtils.Web.React.Class.Tools
             where TView : WebView
         {
             return (TView) webContext.Items[WebView.VIEW_NAME];
+        }
+
+        public static WebDictionnary<TKey, TValue> ToWebDictionnary<TKey, TValue>(this Dictionary<TKey, TValue> map)
+        {
+            WebDictionnary<TKey, TValue> webMap = new WebDictionnary<TKey, TValue>();
+
+            map.ToList().ForEach(x => webMap.Add(x.Key, x.Value));
+
+            return webMap;
         }
     }
 }

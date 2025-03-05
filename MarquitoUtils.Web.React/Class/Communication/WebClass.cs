@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 using System.Reflection;
+using System.Text.Json;
 using static MarquitoUtils.Main.Class.Enums.EnumLang;
 
 namespace MarquitoUtils.Web.React.Class.Communication
@@ -154,7 +155,10 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// <returns>JSON content result</returns>
         private JsonResult GetJsonResult(JsonResultContent result, int statusCode)
         {
-            return new JsonResult(result)
+            return new JsonResult(result, new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = null,
+            })
             {
                 StatusCode = statusCode,
             };

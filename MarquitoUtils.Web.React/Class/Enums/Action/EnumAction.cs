@@ -11,5 +11,6 @@
         BeforeOpenPopup,
         SaveData,
         UploadFile,
+        GetData,
     }
 }

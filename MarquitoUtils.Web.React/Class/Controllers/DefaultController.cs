@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
+using System.Text.Json;
 
 namespace MarquitoUtils.Web.React.Class.Controllers
 {
@@ -524,7 +525,10 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <returns>JSON content result</returns>
         private JsonResult GetJsonResult(JsonResultContent result, int statusCode)
         {
-            return new JsonResult(result)
+            return new JsonResult(result, new JsonSerializerOptions()
+            {
+                PropertyNamingPolicy = null,
+            })
             {
                 StatusCode = statusCode,
             };
