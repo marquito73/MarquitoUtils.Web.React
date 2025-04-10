@@ -1,5 +1,7 @@
-﻿using MarquitoUtils.Web.React.Class.Communication;
+﻿using MarquitoUtils.Main.Class.Enums;
+using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Enums;
+using MarquitoUtils.Web.React.Class.Enums.Action;
 using MarquitoUtils.Web.React.Class.Views;
 using System;
 using System.Collections.Generic;
@@ -15,8 +17,8 @@ namespace MarquitoUtils.Web.React.Class.Url
         public string ViewMainUrl { get; set; } = "/home/frag";
         public Type View { get; private set; } = typeof(V);
         public Type Action { get; private set; } = typeof(A);
-        public string ActionAction { get; set; } = "";
-        public WebViewUrl(string action) : base(EnumUrlType.View)
+        public EnumAction ActionAction { get; set; } = EnumAction.None;
+        public WebViewUrl(EnumAction action) : base(EnumUrlType.View)
         {
             this.ActionAction = action;
         }
@@ -30,7 +32,7 @@ namespace MarquitoUtils.Web.React.Class.Url
                 .Append("&").Append("viewName").Append("=").Append(this.GetViewFullName().Trim())
                 .Append("&").Append("actionFullName").Append("=").Append(this.GetActionFullName().Trim())
                 .Append("&").Append("actionName").Append("=").Append(this.GetActionName().Trim())
-                .Append("&").Append("action").Append("=").Append(this.ActionAction.Trim());
+                .Append("&").Append("action").Append("=").Append(this.ActionAction.GetEnumName().Trim());
 
             foreach (KeyValuePair<string, string> parameter in this.Parameters)
             {

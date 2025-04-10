@@ -2,6 +2,7 @@
 using MarquitoUtils.Main.Class.Enums;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
+using MarquitoUtils.Web.React.Class.Startup;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -53,8 +54,18 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// Controller context
         /// </summary>
         public ControllerContext ControllerContext { get; set; }
+        /// <summary>
+        /// Controller view data
+        /// </summary>
         public ViewDataDictionary ControllerViewData { get; set; }
+        /// <summary>
+        /// Controller temp data
+        /// </summary>
         public ITempDataDictionary ControllerTempData { get; set; }
+        /// <summary>
+        /// Options configured at Sartup time
+        /// </summary>
+        public StartupOptions StartupOptions { get; set; }
 
         /// <summary>
         /// Web engine, for manage data in session

@@ -10,6 +10,7 @@ using MarquitoUtils.Web.React.Class.Attributes;
 using MarquitoUtils.Web.React.Class.Communication;
 using MarquitoUtils.Web.React.Class.Communication.JSON;
 using MarquitoUtils.Web.React.Class.Enums.Action;
+using MarquitoUtils.Web.React.Class.Startup;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Views;
 using Microsoft.AspNetCore.Http;
@@ -59,16 +60,28 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// Db context
         /// </summary>
         protected DefaultDbContext DbContext { get; set; }
+        /// <summary>
+        /// The file service
+        /// </summary>
         private IFileService FileService { get; set; } = new FileService();
+        /// <summary>
+        /// The user tracking service
+        /// </summary>
         private IUserTrackService UserTrackService { get; set; } = new UserTrackService();
+        /// <summary>
+        /// Startup options
+        /// </summary>
+        private StartupOptions StartupOptions { get; set; }
 
         /// <summary>
         /// Default controller
         /// </summary>
         /// <param name="logger">Logger</param>
-        protected DefaultController(ILogger<DefaultController<TController, THub>> logger)
+        /// <param name="startupOptions">Sartup options</param>
+        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, StartupOptions startupOptions)
         {
             this._logger = logger;
+            this.StartupOptions = startupOptions;
 
             string entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
 
@@ -81,8 +94,10 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// Default controller
         /// </summary>
         /// <param name="logger">Logger</param>
+        /// <param name="startupOptions">Sartup options</param>
         /// <param name="notifyHub">Notify hub</param>
-        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, IHubContext<THub> notifyHub) : this(logger)
+        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, StartupOptions startupOptions,
+            IHubContext<THub> notifyHub) : this(logger, startupOptions)
         {
             this.NotifyHub = notifyHub;
         }
@@ -137,8 +152,6 @@ namespace MarquitoUtils.Web.React.Class.Controllers
 
             dataEngine.SetSessionValue("CURRENT_LANGUAGE", LanguageUtils.GetCultureLanguage(newLanguage));
 
-            //return this.GetJsonResult(new { Reload = true });
-
             return this.GetSuccessJsonResult("", "", new
             {
                 Reload = true,
@@ -163,6 +176,8 @@ namespace MarquitoUtils.Web.React.Class.Controllers
             webDataEngine.ControllerContext = this.ControllerContext;
             webDataEngine.ControllerViewData = this.ViewData;
             webDataEngine.ControllerTempData = this.TempData;
+
+            webDataEngine.StartupOptions = this.StartupOptions;
 
 
             if (this.Request.HasFormContentType && Utils.IsNotNull(this.Request.Form))
@@ -384,8 +399,7 @@ namespace MarquitoUtils.Web.React.Class.Controllers
 
             if (Utils.IsNull(view))
             {
-                view = Assembly.GetExecutingAssembly()
-                    .GetType(ViewHelper.GetViewLocation(ViewHelper.MainViewLocationPath, frag_name));
+                view = Assembly.GetExecutingAssembly().GetType(ViewHelper.GetViewLocation(ViewHelper.MainViewLocationPath, frag_name));
             }
             // The view
             WebView webView = null;
@@ -402,16 +416,14 @@ namespace MarquitoUtils.Web.React.Class.Controllers
                     // Create view instance
                     webView = (WebView)Activator.CreateInstance(view, webDataEngine);
                     this.AddMainReactFileToView(webView);
-                    // Store view in context for get data inside the view
-                    this.HttpContext.Items.Add("WebView", webView);
                     // Load the html file with view
-                    viewResult = View($"/Views/{frag_name}.cshtml");
+                    viewResult = this.View($"/Views/{frag_name}.cshtml", webView);
 
                 }
                 else
                 {
                     // View not found
-                    viewResult = Content($"{frag_name} not found !");
+                    viewResult = this.Content($"{frag_name} not found !");
                 }
             }
             else

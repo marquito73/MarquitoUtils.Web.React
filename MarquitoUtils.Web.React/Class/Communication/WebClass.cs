@@ -1,7 +1,7 @@
-﻿using MarquitoUtils.Main.Class.Service.Sql;
+﻿using MarquitoUtils.Main.Class.Service.General;
+using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
-using MarquitoUtils.Main.Class.Translations;
 using MarquitoUtils.Web.React.Class.Communication.JSON;
 using MarquitoUtils.Web.React.Class.Tools;
 using MarquitoUtils.Web.React.Class.Views;
@@ -31,6 +31,10 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// View default location
         /// </summary>
         protected string ViewDefaultLocation { get; set; } = "";
+        /// <summary>
+        /// The translation service
+        /// </summary>
+        protected ITranslateService TranslateService { get; private set; }
 
         /// <summary>
         /// Web class
@@ -44,9 +48,15 @@ namespace MarquitoUtils.Web.React.Class.Communication
             string entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
 
             this.ViewDefaultLocation = $"{entryAssemblyName}.Views";
+
+            this.TranslateService = new TranslateService(webDataEngine.StartupOptions.Translations);
         }
 
-        protected enumLang GetCurrentLanguage()
+        /// <summary>
+        /// Get current language
+        /// </summary>
+        /// <returns>The current language</returns>
+        protected LanguageType GetCurrentLanguage()
         {
             return LanguageUtils.GetLanguage(this.WebDataEngine.CurrentLanguage);
         }
@@ -103,8 +113,8 @@ namespace MarquitoUtils.Web.React.Class.Communication
         /// <returns>The translation</returns>
         protected string GetTranslation<T>(string translateKey) where T : class
         {
-            enumLang lang = Translate.GetLanguageWithCultureInfo(this.CurrentLanguage); 
-            return Translate.GetTranslation<T>(translateKey, lang);
+            LanguageType language = this.TranslateService.GetLanguageWithCultureInfo(this.CurrentLanguage); 
+            return this.TranslateService.GetTranslation<T>(translateKey, language);
         }
 
         /// <summary>

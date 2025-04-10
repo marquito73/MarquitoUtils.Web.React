@@ -54,14 +54,19 @@ namespace MarquitoUtils.Web.React.Class.Tools
             return CultureInfo.GetCultureInfo(GetLanguage(webContext));
         }
 
-        public static enumLang GetLanguage(CultureInfo culture)
+        /// <summary>
+        /// Get language from culture
+        /// </summary>
+        /// <param name="culture">Culture</param>
+        /// <returns>Language from culture</returns>
+        public static LanguageType GetLanguage(CultureInfo culture)
         {
             string languageISOcode = culture.TwoLetterISOLanguageName;
 
-            return Enum.GetValues(typeof(enumLang))
-                .Cast<enumLang>()
+            return Enum.GetValues(typeof(LanguageType))
+                .Cast<LanguageType>()
                 .Where(lang => lang.ToString().ToUpper().Equals(languageISOcode.ToUpper()))
-                .FirstOrDefault(enumLang.EN);
+                .FirstOrDefault(LanguageType.EN);
         }
     }
 }

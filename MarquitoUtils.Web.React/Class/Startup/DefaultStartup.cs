@@ -15,9 +15,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using MarquitoUtils.Main.Class.Entities.Translation;
 using MarquitoUtils.Main.Class.Service.General;
-using MarquitoUtils.Main.Class.Translations;
 using MarquitoUtils.Main.Class.Service.Files;
 using Microsoft.AspNetCore.Routing;
+using MarquitoUtils.Web.React.Class.Entities.File;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -55,22 +55,18 @@ namespace MarquitoUtils.Web.React.Class.Startup
             {
                 this.ManageSqlScripts();
             }
-
-            this.ManageTranslations(Assembly.GetEntryAssembly());
         }
 
         /// <summary>
-        /// Init translations from an XML translation file
+        /// Get translations from XML translation file
         /// </summary>
-        /// <param name="translationFilePath">The path to access translations</param>
-        private void ManageTranslations(Assembly translationFilePath)
+        /// <param name="translationFilePath"></param>
+        /// <returns></returns>
+        private List<Translation> GetTranslations(Assembly translationFilePath)
         {
             ITranslateService translateService = new TranslateService();
 
-            List<Translation> translations = translateService.GetTranslations(
-                    @Properties.Resources.translateFilePath, translationFilePath);
-
-            Translate.SetTranslationService(translations);
+            return translateService.GetTranslations(@Properties.Resources.translateFilePath, translationFilePath);
         }
 
         /// <summary>
@@ -148,7 +144,29 @@ namespace MarquitoUtils.Web.React.Class.Startup
                 .AddJsonProtocol(options => {
                     options.PayloadSerializerOptions.PropertyNamingPolicy = null;
                 });
+
+            // Init startup options
+            StartupOptions options = new StartupOptions();
+
+            // Translations
+            options.Translations = this.GetTranslations(Assembly.GetEntryAssembly());
+
+            // Syncfusion
+            if (this.RegisterSyncFusionLicenseKeyFromConfigFile())
+            {
+                SyncFusionConfiguration syncFusionConfig = this.FileService
+                    .GetDataFromXMLFile<SyncFusionConfiguration>(@"Files\Configuration\SyncFusion.config");
+
+                options.SyncFusionConfiguration = syncFusionConfig;
+            }
+            services.AddSingleton(options);
         }
+
+        /// <summary>
+        /// Register a SyncFusion license key ?
+        /// </summary>
+        /// <returns></returns>
+        protected abstract bool RegisterSyncFusionLicenseKeyFromConfigFile();
 
         /// <summary>
         /// Configure the HTTP request pipeline.
@@ -209,33 +227,6 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// <param name="sqlScriptService">Script service</param>
         protected abstract void ExecuteSqlScripts(ISqlScriptService sqlScriptService);
 
-        /// <summary>
-        /// Get current library assembly
-        /// </summary>
-        /// <returns>Current library assembly</returns>
-        public Assembly GetLibraryWebAssembly()
-        {
-            return Assembly.GetExecutingAssembly();
-        }
-        
-        /// <summary>
-        /// Init database creditentials
-        /// </summary>
-        /// <param name="dbUser">Database user</param>
-        /// <param name="dbPassword">Database user's password</param>
-        /// <param name="dbSource">Database source</param>
-        /// <param name="dbName">Database's name</param>
-        protected void InitDatabaseCreditentials(string dbUser, string dbPassword, string dbSource, 
-            string dbName)
-        {
-            /*SqlConnectionBuilder sqlConnectionBuilder = new SqlConnectionBuilder(dbUser,
-                dbPassword, dbSource, dbName);
-
-            string encryptedDb = Encrypter.EncryptString(sqlConnectionBuilder.GetConnectionString());
-
-            string decryptedDb = Encrypter.DecryptString(encryptedDb);*/
-        }
-
         protected string LoadImportFiles()
         {
             string executingPath = WebFileHelper.GetExecutingLocationPath(Assembly.GetEntryAssembly());
@@ -246,7 +237,6 @@ namespace MarquitoUtils.Web.React.Class.Startup
 
             return tempDirPath;
         }
-
 
         protected StaticFileOptions GetStaticFileOptions(string root)
         {

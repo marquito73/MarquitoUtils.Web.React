@@ -9,7 +9,7 @@ namespace MarquitoUtils.Web.React.Class.Components.TextArea
         public DateTime MinimumDate { get; set; }
         public DateTime MaximumDate { get; set; }
         public string PlaceHolder { get; set; } = "";
-        public enumLang Language { get; set; } = enumLang.FR;
+        public LanguageType Language { get; set; } = LanguageType.FR;
         public bool HasBorder { get; set; } = true;
         public string BackgroundColor { get; set; } = "";
         public bool BrightnessWhenHoverFocus { get; set; } = true;

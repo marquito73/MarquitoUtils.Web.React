@@ -34,11 +34,18 @@ namespace MarquitoUtils.Web.React.Class.Views
             // The view find
             ViewEngineResult viewResult = this.GetViewResult();
 
+            this.WebDataEngine.ControllerViewData.Model = this;
             using (var sw = new StringWriter())
             {
                 // Get the result of the view as string
-                ViewContext viewContext = new ViewContext(this.WebDataEngine.ControllerContext, viewResult.View, 
-                    this.WebDataEngine.ControllerViewData, this.WebDataEngine.ControllerTempData, sw, new HtmlHelperOptions());
+                ViewContext viewContext = new ViewContext(
+                    this.WebDataEngine.ControllerContext, 
+                    viewResult.View, 
+                    this.WebDataEngine.ControllerViewData, 
+                    this.WebDataEngine.ControllerTempData, 
+                    sw, 
+                    new HtmlHelperOptions());
+
                 viewResult.View.RenderAsync(viewContext);
                 viewHtmlResult = new HtmlString(sw.ToString());
             }

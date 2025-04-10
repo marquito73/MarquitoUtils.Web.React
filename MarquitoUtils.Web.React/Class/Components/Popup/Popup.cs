@@ -48,7 +48,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
         /// <summary>
         /// The url to load the popup
         /// </summary>
-        public WebViewUrl<V, A> ContentUrl { get; private set; } = new WebViewUrl<V, A>("");
+        public WebViewUrl<V, A> ContentUrl { get; private set; } = new WebViewUrl<V, A>(EnumAction.LoadView);
         /// <summary>
         /// Need to reload the view each time we open the popup ?
         /// </summary>
@@ -117,7 +117,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Popup
         {
             this.ReactComponentName = "Popup";
             this.Title = popupTitle;
-            this.ContentUrl.ActionAction = action.GetEnumName();
+            this.ContentUrl.ActionAction = action;
             this.CloseUrl = new WebActionUrl<A>(EnumAction.ClosePopup).GetEncodedUrl();
         }
 

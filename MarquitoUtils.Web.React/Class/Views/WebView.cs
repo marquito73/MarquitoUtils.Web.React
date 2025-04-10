@@ -84,12 +84,12 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// <summary>
         /// This method is executed after constructor loading
         /// </summary>
-        public abstract void Init();
+        protected abstract void Init();
 
         /// <summary>
         /// This method can be called after initialisation of the view
         /// </summary>
-        public abstract void AfterInit();
+        protected abstract void AfterInit();
 
         /// <summary>
         /// Get access url
