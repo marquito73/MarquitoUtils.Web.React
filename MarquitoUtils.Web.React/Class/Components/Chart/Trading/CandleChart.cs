@@ -1,4 +1,5 @@
 ﻿using MarquitoUtils.Web.React.Class.Communication;
+using MarquitoUtils.Web.React.Class.Components.Chart.SyncFusion;
 using MarquitoUtils.Web.React.Class.Entities;
 using MarquitoUtils.Web.React.Class.Enums.Action;
 using MarquitoUtils.Web.React.Class.Url;
@@ -8,7 +9,7 @@ namespace MarquitoUtils.Web.React.Class.Components.Chart.Trading
     /// <summary>
     /// A chart with candles
     /// </summary>
-    public class CandleChart<TActionUrl> : Chart<CandleData>
+    public class CandleChart<TActionUrl> : SyncFusionChart<CandleData>
         where TActionUrl : WebAction
     {
         /// <summary>
