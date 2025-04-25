@@ -13,19 +13,22 @@ using React.AspNet;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using MarquitoUtils.Main.Class.Entities.Translation;
 using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Files;
 using Microsoft.AspNetCore.Routing;
 using MarquitoUtils.Web.React.Class.Entities.File;
+using MarquitoUtils.Main.Class.Entities.Sql;
+using MarquitoUtils.Main.Class.Entities.Sql.Translations;
+using MarquitoUtils.Main.Class.Entities.Sql.UserTracking;
+using MarquitoUtils.Main.Class.Tools;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
     /// <summary>
     /// Default startup class
     /// </summary>
-    /// <typeparam name="T">Database context</typeparam>
-    public abstract class DefaultStartup<T> where T : DefaultDbContext
+    /// <typeparam name="DBContext">Database context</typeparam>
+    public abstract class DefaultStartup<DBContext> where DBContext : DefaultDbContext
     {
         protected IConfiguration Configuration { get; }
         /// <summary>
@@ -39,7 +42,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// <summary>
         /// The database context
         /// </summary>
-        protected T DbContext { get; private set; }
+        protected DBContext DbContext { get; private set; }
 
         /// <summary>
         /// Default startup class
@@ -62,7 +65,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// </summary>
         /// <param name="translationFilePath"></param>
         /// <returns></returns>
-        private List<Translation> GetTranslations(Assembly translationFilePath)
+        private List<Main.Class.Entities.Translation.Translation> GetTranslations(Assembly translationFilePath)
         {
             ITranslateService translateService = new TranslateService();
 
@@ -78,37 +81,32 @@ namespace MarquitoUtils.Web.React.Class.Startup
                 this.FileService.GetDefaultDatabaseConfiguration();
             // Init startup db context
             this.DbContext = DefaultDbContext
-                .GetDbContext<T>(databaseConfiguration);
+                .GetDbContext<DBContext>(databaseConfiguration);
 
             this.SqlScriptService = new SqlScriptService(databaseConfiguration);
             this.SqlScriptService.EntityService = new EntityService();
             this.SqlScriptService.EntityService.DbContext = this.DbContext;
             // If script_history table not found, we need to create it
-            if (!this.SqlScriptService.CheckIfTableExist("script_history"))
+            if (!this.SqlScriptService.CheckIfTableExist<ScriptHistory>())
             {
-                // Get script for save all sql files executed
-                CustomFile sqlHistoryScript = WebFileHelper.GetSqlFile("001_ScriptHistory");
-                // Execute it
-                this.SqlScriptService.ExecuteSqlScript(sqlHistoryScript.FileName, sqlHistoryScript.Content, false);
+                // Get script for save all sql files executed and execute it
+                this.SqlScriptService.ExecuteEntitySqlScript<ScriptHistory>(false);
             }
-            // If translation and translation_field tables not found, we need to create it
-            if (!this.SqlScriptService.CheckIfTableExist("translation") 
-                && !this.SqlScriptService.CheckIfTableExist("translation_field"))
-            {
-                // Get script for translations
-                CustomFile sqlTranslations = WebFileHelper.GetSqlFile("002_Translations");
-                // Execute it
-                this.SqlScriptService.ExecuteSqlScript(sqlTranslations.FileName, sqlTranslations.Content, false);
-            }
-            // If user track history table not found, we need to create it
-            if (!this.SqlScriptService.CheckIfTableExist("user_track_history"))
-            {
-                // Get script for user track history
-                CustomFile sqlTranslations = WebFileHelper.GetSqlFile("003_UserTrackHistory");
-                // Execute it
-                this.SqlScriptService.ExecuteSqlScript(sqlTranslations.FileName, sqlTranslations.Content, false);
-            }
-            // Execute alls sql scripts
+            // Get script for translations and execute it
+            this.SqlScriptService.ExecuteEntitySqlScript<TranslationField>();
+            this.SqlScriptService.ExecuteEntitySqlScript<Translation>();
+            // Get script for user track history and execute it
+            this.SqlScriptService.ExecuteEntitySqlScript<UserTrackHistory>();
+            // Execute all entities scripts
+            typeof(DBContext).GetProperties()
+                .Where(prop => Utils.IsGenericDbSetType(prop.PropertyType))
+                .Select(prop => prop.PropertyType.GenericTypeArguments[0])
+                .Where(entityType =>
+                {
+                    return !entityType.Assembly.Equals(typeof(ScriptHistory).Assembly);
+                })
+                .ForEach(entityType => this.SqlScriptService.ExecuteEntitySqlScript(entityType));
+            // Execute alls custom sql scripts
             this.ExecuteSqlScripts(this.SqlScriptService);
             // Flush eventual data
             this.SqlScriptService.EntityService.FlushData(out Exception exception);
