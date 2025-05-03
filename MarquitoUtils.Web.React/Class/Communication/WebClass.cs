@@ -1,4 +1,5 @@
-﻿using MarquitoUtils.Main.Class.Service.General;
+﻿using MarquitoUtils.Main.Class.Entities.Sql;
+using MarquitoUtils.Main.Class.Service.General;
 using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Sql;
 using MarquitoUtils.Main.Class.Tools;
@@ -115,6 +116,22 @@ namespace MarquitoUtils.Web.React.Class.Communication
         {
             LanguageType language = this.TranslateService.GetLanguageWithCultureInfo(this.CurrentLanguage); 
             return this.TranslateService.GetTranslation<T>(translateKey, language);
+        }
+
+        /// <summary>
+        /// Get entity list
+        /// </summary>
+        /// <typeparam name="TEntityList">Entity list type</typeparam>
+        /// <typeparam name="TEntity">Entity type</typeparam>
+        /// <returns>List of entities</returns>
+        protected TEntityList GetEntityList<TEntityList, TEntity>()
+            where TEntityList : EntityList<TEntity>, new()
+            where TEntity : Entity
+        {
+            TEntityList entityList = new TEntityList();
+            entityList.DbContext = this.WebDataEngine.DbContext;
+
+            return entityList;
         }
 
         /// <summary>

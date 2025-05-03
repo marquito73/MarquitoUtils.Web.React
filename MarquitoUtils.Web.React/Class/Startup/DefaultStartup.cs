@@ -99,7 +99,7 @@ namespace MarquitoUtils.Web.React.Class.Startup
             this.SqlScriptService.ExecuteEntitySqlScript<UserTrackHistory>();
             // Execute all entities scripts
             typeof(DBContext).GetProperties()
-                .Where(prop => Utils.IsGenericDbSetType(prop.PropertyType))
+                .Where(prop => prop.PropertyType.IsGenericDbSetType())
                 .Select(prop => prop.PropertyType.GenericTypeArguments[0])
                 .Where(entityType =>
                 {

@@ -60,7 +60,7 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// <param name="webDataEngine">Web engine, contain data about session</param>
         protected WebView(WebDataEngine webDataEngine) : base(webDataEngine)
         {
-            this.Init();
+            this.BeforeInit();
             if (this.LoadMainWebFileImport)
             {
                 WebFileImport newWebFileImport = WebFileHelper.GetMainWebFileImport(this.LoadingIcon, this.ContainerIdForLoading);
@@ -69,7 +69,7 @@ namespace MarquitoUtils.Web.React.Class.Views
             // Add js for this view (css is included inside js)
             this.WebFileImport.JavascriptModules
                 .Add($"/dist{FileHelper.GetRelativePathOfClass(this.GetType(), ".Views.", 6)}", new List<string>());
-            this.AfterInit();
+            this.Init();
         }
 
         /// <summary>
@@ -82,6 +82,11 @@ namespace MarquitoUtils.Web.React.Class.Views
         }
 
         /// <summary>
+        /// This method is executed before constructor loading
+        /// </summary>
+        protected abstract void BeforeInit();
+
+        /// <summary>
         /// This method is executed after constructor loading
         /// </summary>
         protected abstract void Init();
@@ -89,7 +94,10 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// <summary>
         /// This method can be called after initialisation of the view
         /// </summary>
-        protected abstract void AfterInit();
+        protected virtual void AfterInit()
+        {
+
+        }
 
         /// <summary>
         /// Get access url
