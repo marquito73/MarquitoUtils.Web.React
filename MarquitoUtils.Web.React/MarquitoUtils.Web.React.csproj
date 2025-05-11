@@ -38,4 +38,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Class\Entities\File\" />
+  </ItemGroup>
+
 </Project>

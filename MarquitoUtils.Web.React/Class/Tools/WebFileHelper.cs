@@ -32,17 +32,6 @@ namespace MarquitoUtils.Web.React.Class.Tools
             return Path.GetDirectoryName(assembly.Location);
         }
 
-        public static WebConfig ReadConfig()
-        {
-            return ReadConfig(Assembly.GetExecutingAssembly());
-        }
-
-        public static WebConfig ReadConfig(Assembly assembly)
-        {
-            return WebConfigReader.readWebConfigDataFromFile(@"D:\Users\USER_TEMP\Visual\source\repos\MarquitoUtils.Web\MarquitoUtils.Web\Files\Web\Config\DefaultWebConfig.xml", 
-                assembly);
-        }
-
         /// <summary>
         /// Get list of static files
         /// </summary>

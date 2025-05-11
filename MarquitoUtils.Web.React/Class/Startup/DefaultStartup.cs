@@ -21,6 +21,7 @@ using MarquitoUtils.Main.Class.Entities.Sql;
 using MarquitoUtils.Main.Class.Entities.Sql.Translations;
 using MarquitoUtils.Main.Class.Entities.Sql.UserTracking;
 using MarquitoUtils.Main.Class.Tools;
+using MarquitoUtils.Web.React.Class.Config.WebFront;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -149,6 +150,15 @@ namespace MarquitoUtils.Web.React.Class.Startup
             // Translations
             options.Translations = this.GetTranslations(Assembly.GetEntryAssembly());
 
+            // Web configuration
+            if (this.UseWebFrontConfigFromConfigFile())
+            {
+                WebFrontConfiguration webFrontConfig = this.FileService
+                    .GetDataFromXMLFile<WebFrontConfiguration>(@"Files\Configuration\WebFront.config");
+
+                options.WebFrontConfiguration = webFrontConfig;
+            }
+
             // Syncfusion
             if (this.RegisterSyncFusionLicenseKeyFromConfigFile())
             {
@@ -161,8 +171,16 @@ namespace MarquitoUtils.Web.React.Class.Startup
         }
 
         /// <summary>
+        /// Use web config file for fonts, sizes and colors of the website ?
+        /// </summary>
+        /// <remarks>Config file need to be Files\Configuration\WebFront.config (as embedded resource)</remarks>
+        /// <returns></returns>
+        protected abstract bool UseWebFrontConfigFromConfigFile();
+
+        /// <summary>
         /// Register a SyncFusion license key ?
         /// </summary>
+        /// <remarks>Config file need to be Files\Configuration\SyncFusion.config (as embedded resource)</remarks>
         /// <returns></returns>
         protected abstract bool RegisterSyncFusionLicenseKeyFromConfigFile();
 
