@@ -41,10 +41,14 @@ namespace MarquitoUtils.Web.React.Class.Views
         /// Do we load main web files ?
         /// </summary>
         protected bool LoadMainWebFileImport { get; set; } = false;
-
-        protected Dictionary<string, string> MetaDatas { get; private set; } = new Dictionary<string, string>();
-
-
+        /// <summary>
+        /// A list of css variables to load on the view
+        /// </summary>
+        private Dictionary<string, string> CssVariables { get; } = new Dictionary<string, string>();
+        /// <summary>
+        /// Meta datas
+        /// </summary>
+        private Dictionary<string, string> MetaDatas { get; } = new Dictionary<string, string>();
         /// <summary>
         /// An object for display toast notifications
         /// </summary>
@@ -147,6 +151,49 @@ namespace MarquitoUtils.Web.React.Class.Views
             return componentReactJson;
         }
 
+        #region CSS
+
+        /// <summary>
+        /// Add a CSS variable
+        /// </summary>
+        /// <param name="cssVariableName">CSS variable name</param>
+        /// <param name="cssVariableValue">CSS variable value</param>
+        protected void AddCssVariable(string cssVariableName, string cssVariableValue)
+        {
+            this.CssVariables.Add(cssVariableName, cssVariableValue);
+        }
+
+        /// <summary>
+        /// Get CSS variables inside style tag as HTML string
+        /// </summary>
+        /// <returns>CSS variables inside style tag</returns>
+        public HtmlString GetCssVariables()
+        {
+            StringBuilder sbCss = new StringBuilder();
+
+            sbCss.Append("<style type=\"text/css\">").Append("\n").Append(":root {").Append("\n")
+                .Append(string.Join("\n", this.CssVariables
+                .Select(metaData => this.GetCssVariable(metaData.Key, metaData.Value))))
+                .Append("\n").Append("}").Append("\n").Append("</style>");
+
+            return new HtmlString(sbCss.ToString());
+        }
+
+        /// <summary>
+        /// Get CSS variable as string
+        /// </summary>
+        /// <param name="cssVariableName">CSS variable name</param>
+        /// <param name="cssVariableValue">CSS variable value</param>
+        /// <returns>CSS variable as string</returns>
+        private string GetCssVariable(string cssVariableName, string cssVariableValue)
+        {
+            return $"\t--{cssVariableName}: {cssVariableValue};";
+        }
+
+        #endregion CSS
+
+        #region MetaData
+
         /// <summary>
         /// Add meta data to your page
         /// </summary>
@@ -157,6 +204,10 @@ namespace MarquitoUtils.Web.React.Class.Views
             this.MetaDatas.Add(metaName, metaContent);
         }
 
+        /// <summary>
+        /// Add meta data to your page
+        /// </summary>
+        /// <param name="keyWords">A list of key words</param>
         protected void AddKeyWordsMetaData(List<string> keyWords)
         {
             this.MetaDatas.Add("keywords", string.Join(" ", keyWords));
@@ -182,6 +233,8 @@ namespace MarquitoUtils.Web.React.Class.Views
         {
             return $"<meta name=\"{metaName}\" content=\"{metaContent}\" />";
         }
+
+        #endregion
 
         protected void InitToastManager()
         {

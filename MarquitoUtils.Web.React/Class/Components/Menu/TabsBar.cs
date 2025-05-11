@@ -13,6 +13,10 @@ namespace MarquitoUtils.Web.React.Class.Components.Menu
         /// </summary>
         public List<Tab> Tabs { get; set; } = new List<Tab>();
         /// <summary>
+        /// Selected color
+        /// </summary>
+        public string SelectedColor { get; set; }
+        /// <summary>
         /// The next tab number
         /// </summary>
         private int NextTabNumber { get; set; } = 0;
