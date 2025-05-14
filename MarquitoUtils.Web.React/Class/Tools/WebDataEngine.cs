@@ -1,6 +1,6 @@
 ﻿using MarquitoUtils.Main.Class.Entities.Param;
 using MarquitoUtils.Main.Class.Enums;
-using MarquitoUtils.Main.Class.Sql;
+using MarquitoUtils.Main.Class.Service.Sql;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Startup;
 using Microsoft.AspNetCore.Http;
@@ -31,9 +31,9 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// </summary>
         public string RootUrl { get; private set; }
         /// <summary>
-        /// The Database Context
+        /// The entity service
         /// </summary>
-        public DefaultDbContext DbContext { get; private set; }
+        internal IEntityService EntityService { get; private set; }
         /// <summary>
         /// The parameters from the query
         /// </summary>
@@ -66,7 +66,6 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// Options configured at Sartup time
         /// </summary>
         public StartupOptions StartupOptions { get; set; }
-
         /// <summary>
         /// Web engine, for manage data in session
         /// </summary>
@@ -99,21 +98,21 @@ namespace MarquitoUtils.Web.React.Class.Tools
         /// Web engine, for manage data in session
         /// </summary>
         /// <param name="webSession">The web session</param>
-        /// <param name="dbContext">The database context</param>
+        /// <param name="entityService">The entity service</param>
         /// <param name="rootUrl">The root url</param>
-        public WebDataEngine(ISession webSession, DefaultDbContext dbContext, string rootUrl) 
+        public WebDataEngine(ISession webSession, IEntityService entityService, string rootUrl) 
             : this(webSession, rootUrl)
         {
-            this.DbContext = dbContext;
+            this.EntityService = entityService;
         }
 
         /// <summary>
         /// Web engine, for manage data in session
         /// </summary>
         /// <param name="webContext">The web context</param>
-        /// <param name="dbContext">The database context</param>
-        public WebDataEngine(HttpContext webContext, DefaultDbContext dbContext) 
-            : this(webContext.Session, dbContext, webContext.Request.Host.Value)
+        /// <param name="entityService">The entity service</param>
+        public WebDataEngine(HttpContext webContext, IEntityService entityService) 
+            : this(webContext.Session, entityService, webContext.Request.Host.Value)
         {
             this.WebContext = webContext;
 

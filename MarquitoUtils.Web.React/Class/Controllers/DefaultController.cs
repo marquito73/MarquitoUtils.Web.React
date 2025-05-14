@@ -57,9 +57,9 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// </summary>
         protected string MainReactFile { get; set; } = "/dist/Main";
         /// <summary>
-        /// Db context
+        /// The entity service
         /// </summary>
-        protected DefaultDbContext DbContext { get; set; }
+        private IEntityService EntityService { get; set; }
         /// <summary>
         /// The file service
         /// </summary>
@@ -78,10 +78,13 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// </summary>
         /// <param name="logger">Logger</param>
         /// <param name="startupOptions">Sartup options</param>
-        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, StartupOptions startupOptions)
+        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, StartupOptions startupOptions, 
+            IEntityService entityService)
         {
             this._logger = logger;
             this.StartupOptions = startupOptions;
+            this.EntityService = entityService;
+            this.UserTrackService.EntityService = entityService;
 
             string entryAssemblyName = Assembly.GetEntryAssembly().GetName().Name;
 
@@ -96,47 +99,10 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <param name="logger">Logger</param>
         /// <param name="startupOptions">Sartup options</param>
         /// <param name="notifyHub">Notify hub</param>
-        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, StartupOptions startupOptions,
-            IHubContext<THub> notifyHub) : this(logger, startupOptions)
+        protected DefaultController(ILogger<DefaultController<TController, THub>> logger, StartupOptions startupOptions, 
+            IEntityService entityService, IHubContext<THub> notifyHub) : this(logger, startupOptions, entityService)
         {
             this.NotifyHub = notifyHub;
-        }
-
-        /// <summary>
-        /// Init database context
-        /// </summary>
-        private void InitDbContext()
-        {
-            if (Utils.IsNull(this.DbContext))
-            {
-                DatabaseConfiguration databaseConfiguration =
-                this.FileService.GetDefaultDatabaseConfiguration();
-
-                this.DbContext = DefaultDbContext.GetDbContext<TController>(databaseConfiguration);
-
-                this.UserTrackService.EntityService = this.GetEntityService();
-            }
-        }
-
-        /// <summary>
-        /// Get entity service
-        /// </summary>
-        /// <returns>The entity service</returns>
-        /// <exception cref="Exception"></exception>
-        protected IEntityService GetEntityService()
-        {
-            IEntityService entityService = new EntityService();
-
-            if (Utils.IsNotNull(this.DbContext))
-            {
-                entityService.DbContext = this.DbContext;
-            }
-            else
-            {
-                throw new Exception("Can't get entity service without DbContext specified to the WebClass");
-            }
-
-            return entityService;
         }
 
         /// <summary>
@@ -171,14 +137,13 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         /// <returns></returns>
         protected WebDataEngine GetWebDataEngine(List<Parameter> parameters = null)
         {
-            WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.DbContext);
+            WebDataEngine webDataEngine = new WebDataEngine(this.HttpContext, this.EntityService);
 
             webDataEngine.ControllerContext = this.ControllerContext;
             webDataEngine.ControllerViewData = this.ViewData;
             webDataEngine.ControllerTempData = this.TempData;
 
             webDataEngine.StartupOptions = this.StartupOptions;
-
 
             if (this.Request.HasFormContentType && Utils.IsNotNull(this.Request.Form))
             {
@@ -235,8 +200,6 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         {
             IActionResult ajaxResult = new ContentResult();
 
-            this.InitDbContext();
-
             // Parameters in query
             List<Parameter> parameters = AjaxHelper.GetValuesFromUrl(this.Request.QueryString.Value);
             // Init web data engine
@@ -292,8 +255,6 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         protected IActionResult ExecAction(string action_name, string action_action, Assembly assembly)
         {
             IActionResult actionResult = new ContentResult();
-
-            this.InitDbContext();
 
             List<Parameter> parameters = ActionHelper.GetValuesFromUrl(this.Request.QueryString.Value);
 
@@ -381,10 +342,13 @@ namespace MarquitoUtils.Web.React.Class.Controllers
         {
             IActionResult viewResult = new ContentResult();
 
-            this.InitDbContext();
-
-            // Track user visit count
-            this.UserTrackService.SaveUserTrack(this.GetWebDataEngine().GetUserIPAddress());
+            // Track user visit count (asynchronously for prevent database perf)
+            string IPAddress = this.GetWebDataEngine().GetUserIPAddress();
+            Task.Run(() =>
+            {
+                string address = IPAddress;
+                this.UserTrackService.SaveUserTrack(address);
+            });
 
             // Params of the request
             List<Parameter> parameters = ViewHelper.GetValuesFromUrl(this.Request.QueryString.Value);

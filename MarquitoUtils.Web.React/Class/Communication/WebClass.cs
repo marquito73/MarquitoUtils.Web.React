@@ -69,41 +69,12 @@ namespace MarquitoUtils.Web.React.Class.Communication
         }
 
         /// <summary>
-        /// Get the database context
-        /// </summary>
-        /// <typeparam name="T">Type of database context</typeparam>
-        /// <returns>The database context</returns>
-        public T GetDbContext<T>() where T : DefaultDbContext
-        {
-            T result = default(T);
-
-            if (Utils.IsNotNull(this.WebDataEngine.DbContext) && this.WebDataEngine.DbContext is T)
-            {
-                result = (T)this.WebDataEngine.DbContext;
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Get entity service
         /// </summary>
         /// <returns>The entity service</returns>
-        /// <exception cref="Exception"></exception>
         public IEntityService GetEntityService()
         {
-            IEntityService entityService = new EntityService();
-
-            if (Utils.IsNotNull(this.WebDataEngine.DbContext))
-            {
-                entityService.DbContext = this.WebDataEngine.DbContext;
-            }
-            else
-            {
-                throw new Exception("Can't get entity service without DbContext specified to the WebClass");
-            }
-
-            return entityService;
+            return this.WebDataEngine.EntityService;
         }
 
         /// <summary>
@@ -129,7 +100,7 @@ namespace MarquitoUtils.Web.React.Class.Communication
             where TEntity : Entity
         {
             TEntityList entityList = new TEntityList();
-            entityList.DbContext = this.WebDataEngine.DbContext;
+            entityList.EntityService = this.WebDataEngine.EntityService;
 
             return entityList;
         }

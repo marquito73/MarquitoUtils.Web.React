@@ -22,6 +22,7 @@ using MarquitoUtils.Main.Class.Entities.Sql.Translations;
 using MarquitoUtils.Main.Class.Entities.Sql.UserTracking;
 using MarquitoUtils.Main.Class.Tools;
 using MarquitoUtils.Web.React.Class.Config.WebFront;
+using MarquitoUtils.Main.Class.Cache;
 
 namespace MarquitoUtils.Web.React.Class.Startup
 {
@@ -41,9 +42,17 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// </summary>
         private ISqlScriptService SqlScriptService { get; set; }
         /// <summary>
+        /// Entity service
+        /// </summary>
+        private IEntityService EntityService { get; set; }
+        /// <summary>
         /// The database context
         /// </summary>
         protected DBContext DbContext { get; private set; }
+        /// <summary>
+        /// Entities stored in cache
+        /// </summary>
+        private EntityCache EntityCache { get; } = new EntityCache();
 
         /// <summary>
         /// Default startup class
@@ -55,22 +64,38 @@ namespace MarquitoUtils.Web.React.Class.Startup
         {
             this.Configuration = configuration;
 
+            this.ManageDatabaseContext(executeScripts);
+        }
+
+        /// <summary>
+        /// Manage database (migration scripts, entity cache, etc ..)
+        /// </summary>
+        /// <param name="executeScripts">Execute scripts ?</param>
+        private void ManageDatabaseContext(bool executeScripts)
+        {
+            DatabaseConfiguration databaseConfiguration =
+                this.FileService.GetDefaultDatabaseConfiguration();
+            // Init startup db context
+            this.DbContext = DefaultDbContext
+                .GetDbContext<DBContext>(databaseConfiguration);
+            // Init entity service
+            this.EntityService = new EntityService()
+            {
+                DbContext = this.DbContext,
+            };
+            // Init sql script service
+            this.SqlScriptService = new SqlScriptService(databaseConfiguration);
+            this.SqlScriptService.EntityService = this.EntityService;
+            // Execute scripts
             if (executeScripts)
             {
                 this.ManageSqlScripts();
             }
-        }
-
-        /// <summary>
-        /// Get translations from XML translation file
-        /// </summary>
-        /// <param name="translationFilePath"></param>
-        /// <returns></returns>
-        private List<Main.Class.Entities.Translation.Translation> GetTranslations(Assembly translationFilePath)
-        {
-            ITranslateService translateService = new TranslateService();
-
-            return translateService.GetTranslations(@Properties.Resources.translateFilePath, translationFilePath);
+            // Prepare entity cache
+            if (this.StoreDatabaseEntitiesInCache())
+            {
+                this.ManageCache();
+            }
         }
 
         /// <summary>
@@ -78,15 +103,6 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// </summary>
         private void ManageSqlScripts()
         {
-            DatabaseConfiguration databaseConfiguration =
-                this.FileService.GetDefaultDatabaseConfiguration();
-            // Init startup db context
-            this.DbContext = DefaultDbContext
-                .GetDbContext<DBContext>(databaseConfiguration);
-
-            this.SqlScriptService = new SqlScriptService(databaseConfiguration);
-            this.SqlScriptService.EntityService = new EntityService();
-            this.SqlScriptService.EntityService.DbContext = this.DbContext;
             // If script_history table not found, we need to create it
             if (!this.SqlScriptService.CheckIfTableExist<ScriptHistory>())
             {
@@ -111,8 +127,35 @@ namespace MarquitoUtils.Web.React.Class.Startup
             this.ExecuteSqlScripts(this.SqlScriptService);
             // Flush eventual data
             this.SqlScriptService.EntityService.FlushData(out Exception exception);
+        }
 
-            this.DbContext.Dispose();
+        /// <summary>
+        /// Manage the loading of entities inside the cache
+        /// </summary>
+        private void ManageCache()
+        {
+            typeof(DBContext).GetProperties()
+                .Where(prop => prop.PropertyType.IsGenericDbSetType())
+                .Select(prop => prop.PropertyType.GenericTypeArguments[0])
+                .ForEach(entityType =>
+                {
+                    // Get generics type parameters, and methods type parameters
+                    Type[] genericArgs = { entityType };
+                    Type[] methodsArgs = { typeof(bool) };
+                    // Then get the ExecuteEntitySqlScript method
+                    MethodInfo method = this.SqlScriptService.EntityService
+                        .GetType().GetMethod(nameof(IEntityService.GetEntityList), methodsArgs)
+                        .MakeGenericMethod(genericArgs);
+                    // Finally, execute it and store entities in cache
+                    IEnumerable<Entity> entities = method.Invoke(this.SqlScriptService
+                        .EntityService, new object[] { Type.Missing }) as IEnumerable<Entity>;
+                    this.EntityCache.AddEntities(entityType, entities.ToList());
+                });
+
+            // Manage entity cache
+            this.EntityService.EntityCache = this.EntityCache;
+
+            this.EntityService.DbContext.UseCache = this.StoreDatabaseEntitiesInCache();
         }
 
         /// <summary>
@@ -168,6 +211,20 @@ namespace MarquitoUtils.Web.React.Class.Startup
                 options.SyncFusionConfiguration = syncFusionConfig;
             }
             services.AddSingleton(options);
+
+            services.AddSingleton(this.EntityService);
+        }
+
+        /// <summary>
+        /// Get translations from XML translation file
+        /// </summary>
+        /// <param name="translationFilePath"></param>
+        /// <returns></returns>
+        private List<Main.Class.Entities.Translation.Translation> GetTranslations(Assembly translationFilePath)
+        {
+            ITranslateService translateService = new TranslateService();
+
+            return translateService.GetTranslations(@Properties.Resources.translateFilePath, translationFilePath);
         }
 
         /// <summary>
@@ -183,6 +240,12 @@ namespace MarquitoUtils.Web.React.Class.Startup
         /// <remarks>Config file need to be Files\Configuration\SyncFusion.config (as embedded resource)</remarks>
         /// <returns></returns>
         protected abstract bool RegisterSyncFusionLicenseKeyFromConfigFile();
+
+        /// <summary>
+        /// Put database entities in cache ? (Improve performance)
+        /// </summary>
+        /// <returns></returns>
+        protected abstract bool StoreDatabaseEntitiesInCache();
 
         /// <summary>
         /// Configure the HTTP request pipeline.
