@@ -1,0 +1,27 @@
+﻿using MarquitoUtils.Web.React.Components;
+using Microsoft.AspNetCore.Html;
+
+namespace MarquitoUtils.Web.React.Components.TextArea
+{
+    public class TextArea : Component
+    {
+        public string Value { get; set; } = "";
+        public string PlaceHolder { get; set; } = "";
+        public bool ReadOnly { get; set; } = false;
+        public bool SpellCheck { get; set; } = false;
+        public bool CanHorizontallyResize { get; set; } = false;
+        public bool CanVerticalResize { get; set; } = false;
+        public bool HasBorder { get; set; } = true;
+        public string BackgroundColor { get; set; } = "";
+        public bool BrightnessWhenHoverFocus { get; set; } = true;
+        public TextArea(string id, string value) : base(id)
+        {
+            this.Value = value;
+        }
+
+        public override HtmlString GetAsReactJson()
+        {
+            return new HtmlString(this.GetInitReactComponent());
+        }
+    }
+}
